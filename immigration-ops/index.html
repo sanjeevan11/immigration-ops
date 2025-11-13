@@ -3,396 +3,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UK Immigration Case Management</title>
-    <meta name="description" content="Professional immigration case management tool for UK visa applications, appeals, and sponsorships">
-    <link rel="stylesheet" href="style.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <title>Immigration Solicitor Dashboard</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <!-- GDPR Consent Modal -->
-    <div id="gdprModal" class="modal" role="dialog" aria-labelledby="gdprTitle" aria-modal="true">
-        <div class="modal-content">
-            <h2 id="gdprTitle">Privacy &amp; Data Protection</h2>
-            <div class="modal-body">
-                <p>This immigration case management tool collects and processes your personal information to assist with your UK visa application.</p>
-                <h3>What We Collect:</h3>
-                <ul>
-                    <li>Your name, contact details, and address</li>
-                    <li>Visa type and application deadlines</li>
-                    <li>Uploaded documents (stored locally only)</li>
-                    <li>Case notes and evidence checklists</li>
-                </ul>
-                <h3>How We Use Your Data:</h3>
-                <p><strong>Purpose:</strong> Immigration case management and legal advice purposes only.</p>
-                <p><strong>Storage:</strong> All data is stored locally in your browser and is NEVER transmitted to external servers.</p>
-                <p><strong>Retention:</strong> Data persists in your browser until you clear it manually.</p>
-                <p><strong>Your Rights:</strong> You can delete all data at any time by clicking "Clear All Data" in settings.</p>
-                <div class="gdpr-consent-checkbox">
-                    <label>
-                        <input type="checkbox" id="gdprConsentCheckbox" required>
-                        <span>I consent to processing my personal data for immigration case management purposes</span>
-                    </label>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button id="gdprAccept" class="btn btn--primary" disabled>Accept &amp; Continue</button>
-                <button id="gdprReject" class="btn btn--outline">Reject</button>
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <h1>🏛️ Immigration Solicitor Dashboard</h1>
+            <div class="header-controls">
+                <button class="btn btn--secondary" onclick="DashboardApp.refreshData()">🔄 Refresh</button>
             </div>
         </div>
-    </div>
-
-    <!-- Deadline Tracker Bar -->
-    <div id="deadlineBar" class="deadline-bar" role="banner" aria-label="Upcoming deadlines">
-        <div class="deadline-bar-content">
-            <span class="deadline-bar-title">Upcoming Deadlines:</span>
-            <div id="deadlineItems" class="deadline-items">
-                <span class="no-deadlines">No deadlines set</span>
-            </div>
-        </div>
-    </div>
+    </header>
 
     <!-- Navigation -->
-    <nav class="navbar" role="navigation">
-        <div class="navbar-content">
-            <div class="navbar-brand">
-                <span class="logo">🏛️ UK Immigration Case Manager</span>
-            </div>
-            <ul class="navbar-menu">
-                <li><a href="#dashboard" data-section="dashboard" class="nav-link active">Dashboard</a></li>
-                <li><a href="#intake" data-section="intake" class="nav-link">Intake</a></li>
-                <li><a href="#documents" data-section="documents" class="nav-link">Documents</a></li>
-                <li><a href="#rules" data-section="rules" class="nav-link">Rules Updates</a></li>
-            </ul>
-            <div class="navbar-actions">
-                <button id="demoModeToggle" class="btn btn--sm btn--secondary" aria-pressed="false">Demo Mode: OFF</button>
-                <button id="clearDataBtn" class="btn btn--sm btn--outline" aria-label="Clear all data">Clear Data</button>
-            </div>
-        </div>
+    <nav class="nav-tabs">
+        <button class="nav-tab active" data-tab="dashboard">📊 Dashboard</button>
+        <button class="nav-tab" data-tab="cases">📋 Cases</button>
     </nav>
 
-    <main class="main-content">
+    <div class="container">
         <!-- Dashboard Section -->
         <section id="dashboard" class="section active">
-            <div class="container">
-                <h1>Immigration Case Dashboard</h1>
-                <div class="dashboard-grid">
-                    <!-- Quick Stats -->
-                    <div class="card">
-                        <div class="card__body">
-                            <h3>Case Status</h3>
-                            <div id="caseStatus" class="stat-value">No Active Case</div>
-                            <p id="caseType" class="stat-label">Select visa type to begin</p>
-                        </div>
-                    </div>
-
-                    <!-- Next Deadline -->
-                    <div class="card">
-                        <div class="card__body">
-                            <h3>Next Deadline</h3>
-                            <div id="nextDeadlineValue" class="stat-value">None</div>
-                            <p id="nextDeadlineLabel" class="stat-label">Set deadlines in intake form</p>
-                        </div>
-                    </div>
-
-                    <!-- Documents Progress -->
-                    <div class="card">
-                        <div class="card__body">
-                            <h3>Documents</h3>
-                            <div id="docsProgress" class="stat-value">0/0</div>
-                            <p class="stat-label">Required documents uploaded</p>
-                        </div>
-                    </div>
-
-                    <!-- Quick Actions -->
-                    <div class="card">
-                        <div class="card__body">
-                            <h3>Quick Actions</h3>
-                            <div class="quick-actions">
-                                <button id="exportPdfBtn" class="btn btn--primary btn--full-width">📄 Export Summary PDF</button>
-                                <button id="whatsappBtn" class="btn btn--outline btn--full-width">💬 Continue via WhatsApp</button>
-                            </div>
-                        </div>
-                    </div>
+            <!-- Summary Cards -->
+            <div class="dashboard-grid">
+                <div class="card">
+                    <h3>Total Cases</h3>
+                    <div class="card-number" id="totalCases">0</div>
                 </div>
-
-                <!-- Rules Update Widget on Dashboard -->
-                <div class="rules-widget-dashboard">
-                    <h2>Latest UK Immigration Rules Updates</h2>
-                    <div id="rulesUpdatesList" class="rules-list"></div>
+                <div class="card">
+                    <h3>Urgent</h3>
+                    <div class="card-number card-number--urgent" id="urgentCases">0</div>
                 </div>
+                <div class="card">
+                    <h3>Pending Docs</h3>
+                    <div class="card-number" id="pendingCases">0</div>
+                </div>
+                <div class="card">
+                    <h3>Completed</h3>
+                    <div class="card-number card-number--success" id="completedCases">0</div>
+                </div>
+            </div>
+
+            <div class="setup-notice" id="setupNotice">
+                ⚙️ <strong>Setup Required:</strong> Update APPS_SCRIPT_URL in js/api.js with your Google Apps Script web app URL
             </div>
         </section>
 
-        <!-- Intake Form Section -->
-        <section id="intake" class="section">
-            <div class="container">
-                <h1>Client Intake Form</h1>
-                <form id="intakeForm" class="intake-form" novalidate>
-                    <!-- Personal Details -->
-                    <div class="form-section">
-                        <h2>Personal Details</h2>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="clientName" class="form-label">Full Name *</label>
-                                <input type="text" id="clientName" name="clientName" class="form-control" required aria-required="true">
-                                <span class="error-message" role="alert"></span>
-                            </div>
-                        </div>
+        <!-- Cases Section -->
+        <section id="cases" class="section">
+            <!-- Filters -->
+            <div class="filters">
+                <input type="text" id="searchInput" class="filter-input" placeholder="Search by Case ID, Name, Email...">
+                <select id="statusFilter" class="filter-select">
+                    <option value="">All Status</option>
+                    <option>New - Waiting for docs</option>
+                    <option>Waiting for Documents</option>
+                    <option>Documents Received</option>
+                    <option>Under Review</option>
+                    <option>In Progress</option>
+                    <option>Awaiting Decision</option>
+                    <option>Approved</option>
+                    <option>Rejected</option>
+                    <option>Completed</option>
+                </select>
+                <select id="urgencyFilter" class="filter-select">
+                    <option value="">All Urgency</option>
+                    <option>Normal</option>
+                    <option>Urgent</option>
+                </select>
+            </div>
 
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="clientEmail" class="form-label">Email Address *</label>
-                                <input type="email" id="clientEmail" name="clientEmail" class="form-control" required aria-required="true">
-                                <span class="error-message" role="alert"></span>
-                            </div>
-                            <div class="form-group">
-                                <label for="clientPhone" class="form-label">Phone Number *</label>
-                                <input type="tel" id="clientPhone" name="clientPhone" class="form-control" placeholder="+44 7700 900000" required aria-required="true">
-                                <span class="error-message" role="alert"></span>
-                            </div>
-                        </div>
+            <!-- Table -->
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th data-sort="Case ID">Case ID</th>
+                            <th data-sort="Name">Name</th>
+                            <th>Email</th>
+                            <th>Visa Route</th>
+                            <th>Status</th>
+                            <th>Urgency</th>
+                            <th>Docs</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="casesTableBody">
+                        <tr>
+                            <td colspan="8" class="loading-cell">
+                                <div class="spinner"></div>
+                                <p>Loading cases...</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
-                        <div class="form-group">
-                            <label for="clientAddress" class="form-label">Street Address *</label>
-                            <input type="text" id="clientAddress" name="clientAddress" class="form-control" required aria-required="true">
-                            <span class="error-message" role="alert"></span>
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="clientCity" class="form-label">City *</label>
-                                <input type="text" id="clientCity" name="clientCity" class="form-control" required aria-required="true">
-                                <span class="error-message" role="alert"></span>
-                            </div>
-                            <div class="form-group">
-                                <label for="clientPostcode" class="form-label">Postcode *</label>
-                                <input type="text" id="clientPostcode" name="clientPostcode" class="form-control" placeholder="SW1A 1AA" required aria-required="true">
-                                <span class="error-message" role="alert"></span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Visa Details -->
-                    <div class="form-section">
-                        <h2>Visa Application Details</h2>
-                        <div class="form-group">
-                            <label for="visaType" class="form-label">Visa Type *</label>
-                            <select id="visaType" name="visaType" class="form-control" required aria-required="true">
-                                <option value="">-- Select Visa Type --</option>
-                                <option value="Spouse Visa">Spouse Visa</option>
-                                <option value="Skilled Worker">Skilled Worker</option>
-                                <option value="Student Visa">Student Visa</option>
-                                <option value="Visit Visa">Visit Visa</option>
-                                <option value="Sponsor Licence">Sponsor Licence</option>
-                                <option value="EUSS">EUSS (EU Settlement Scheme)</option>
-                                <option value="Settlement/ILR">Settlement/ILR</option>
-                                <option value="Other">Other</option>
-                            </select>
-                            <span class="error-message" role="alert"></span>
-                        </div>
-
-                        <!-- Evidence Checklist -->
-                        <div class="form-group">
-                            <label class="form-label">Required Evidence Documents</label>
-                            <div id="evidenceChecklist" class="evidence-checklist">
-                                <p class="hint-text">Select a visa type to see required documents</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Deadlines -->
-                    <div class="form-section">
-                        <h2>Key Deadlines</h2>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="deadline1" class="form-label">Application Submission Deadline</label>
-                                <input type="date" id="deadline1" name="deadline1" class="form-control">
-                            </div>
-                            <div class="form-group">
-                                <label for="deadline2" class="form-label">Biometrics Appointment</label>
-                                <input type="date" id="deadline2" name="deadline2" class="form-control">
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="deadline3" class="form-label">Decision Expected Date</label>
-                                <input type="date" id="deadline3" name="deadline3" class="form-control">
-                            </div>
-                            <div class="form-group">
-                                <label for="deadline4" class="form-label">Appeal Deadline (if applicable)</label>
-                                <input type="date" id="deadline4" name="deadline4" class="form-control">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Case Notes -->
-                    <div class="form-section">
-                        <h2>Additional Notes</h2>
-                        <div class="form-group">
-                            <label for="caseNotes" class="form-label">Case Notes (Optional)</label>
-                            <textarea id="caseNotes" name="caseNotes" class="form-control" rows="5" placeholder="Enter any additional information about this case..."></textarea>
-                        </div>
-                    </div>
-
-                    <!-- GDPR Consent -->
-                    <div class="form-section">
-                        <div class="form-group">
-                            <label class="consent-label">
-                                <input type="checkbox" id="gdprConsent" name="gdprConsent" required aria-required="true">
-                                <span>I consent to processing my personal data for immigration case management purposes *</span>
-                            </label>
-                            <span class="error-message" role="alert"></span>
-                        </div>
-                    </div>
-
-                    <div class="form-actions">
-                        <button type="submit" class="btn btn--primary btn--lg">Save Intake Information</button>
-                        <button type="button" id="resetFormBtn" class="btn btn--outline btn--lg">Reset Form</button>
-                    </div>
-                </form>
+            <!-- Pagination -->
+            <div class="pagination">
+                <button id="prevBtn" class="pagination-btn">← Previous</button>
+                <span id="pageInfo">Page 1</span>
+                <button id="nextBtn" class="pagination-btn">Next →</button>
+                <select id="pageSize" class="filter-select">
+                    <option value="10">10 per page</option>
+                    <option value="25" selected>25 per page</option>
+                    <option value="50">50 per page</option>
+                    <option value="100">100 per page</option>
+                </select>
             </div>
         </section>
+    </div>
 
-        <!-- Documents Section -->
-        <section id="documents" class="section">
-            <div class="container">
-                <h1>Evidence Document Upload</h1>
-                
-                <div class="documents-grid">
-                    <!-- Upload Zone -->
-                    <div class="card upload-card">
-                        <div class="card__body">
-                            <h2>Upload Documents</h2>
-                            <div id="dropZone" class="drop-zone" role="button" tabindex="0" aria-label="Drag and drop files or click to upload">
-                                <div class="drop-zone-content">
-                                    <span class="drop-zone-icon">📁</span>
-                                    <p class="drop-zone-text">Drag &amp; drop files here</p>
-                                    <p class="drop-zone-subtext">or click to browse</p>
-                                    <p class="drop-zone-hint">Accepted: PDF, JPG, PNG (max 20MB)</p>
-                                </div>
-                                <input type="file" id="fileInput" accept=".pdf,.jpg,.jpeg,.png" multiple hidden aria-hidden="true">
-                            </div>
-
-                            <div id="uploadedFiles" class="uploaded-files"></div>
-                        </div>
-                    </div>
-
-                    <!-- Required Documents Checklist -->
-                    <div class="card checklist-card">
-                        <div class="card__body">
-                            <h2>Required Documents</h2>
-                            <div id="requiredDocsChecklist" class="required-docs-list">
-                                <p class="hint-text">Complete the intake form to see required documents for your visa type</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="document-tips card">
-                    <div class="card__body">
-                        <h3>📌 Document Submission Tips</h3>
-                        <ul>
-                            <li><strong>Format:</strong> PDF is preferred for tribunal submissions. Images should be high-resolution (300 DPI minimum).</li>
-                            <li><strong>Naming:</strong> Use clear filenames (e.g., "passport_john_smith.pdf", "bank_statement_jan2025.pdf")</li>
-                            <li><strong>Quality:</strong> Ensure all text is legible and pages are complete</li>
-                            <li><strong>Originals:</strong> Keep original documents safe; these are for case preparation only</li>
-                            <li><strong>Privacy:</strong> All files are stored locally in your browser and never uploaded to servers</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Rules Updates Section -->
-        <section id="rules" class="section">
-            <div class="container">
-                <h1>UK Immigration Rules Updates</h1>
-                
-                <div class="rules-header card">
-                    <div class="card__body">
-                        <p>Stay informed about the latest changes to UK Immigration Rules. These updates affect various visa routes and compliance requirements.</p>
-                        <p class="hint-text"><strong>Note:</strong> This widget displays static sample data. To connect to live GOV.UK Immigration Rules API, see the README for integration instructions.</p>
-                    </div>
-                </div>
-
-                <div id="rulesUpdatesDetailed" class="rules-detailed"></div>
-
-                <div class="rules-footer card">
-                    <div class="card__body">
-                        <h3>Additional Resources</h3>
-                        <div class="resource-links">
-                            <a href="https://www.gov.uk/immigration-rules" target="_blank" rel="noopener noreferrer" class="btn btn--outline">Official Immigration Rules</a>
-                            <a href="https://www.gov.uk/government/organisations/uk-visas-and-immigration" target="_blank" rel="noopener noreferrer" class="btn btn--outline">UK Visas &amp; Immigration</a>
-                            <a href="https://www.gov.uk/government/collections/immigration-rules-statement-of-changes" target="_blank" rel="noopener noreferrer" class="btn btn--outline">Statements of Changes</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h4>About</h4>
-                    <p>Professional immigration case management tool for UK visa applications, appeals, and sponsorships.</p>
-                    <p class="privacy-notice">Your data is stored locally in your browser only and is never shared with third parties.</p>
-                </div>
-                <div class="footer-section">
-                    <h4>Useful Links</h4>
-                    <ul class="footer-links">
-                        <li><a href="https://www.gov.uk/browse/visas-immigration" target="_blank" rel="noopener noreferrer">GOV.UK Immigration</a></li>
-                        <li><a href="https://www.lawsociety.org.uk/" target="_blank" rel="noopener noreferrer">Law Society</a></li>
-                        <li><a href="https://www.gov.uk/government/organisations/office-of-the-immigration-services-commissioner" target="_blank" rel="noopener noreferrer">OISC</a></li>
-                        <li><a href="https://ico.org.uk/" target="_blank" rel="noopener noreferrer">ICO Data Protection</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h4>Help &amp; Support</h4>
-                    <ul class="footer-links">
-                        <li><a href="#" id="viewPrivacyBtn">View Privacy Notice</a></li>
-                        <li><a href="#" id="helpFaqBtn">Help &amp; FAQ</a></li>
-                        <li><a href="https://github.com" target="_blank" rel="noopener noreferrer">GitHub Repository</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2025 UK Immigration Case Manager. Open source project for legal professionals.</p>
-            </div>
-        </div>
-    </footer>
-
-    <!-- WhatsApp Config Modal -->
-    <div id="whatsappModal" class="modal" role="dialog" aria-labelledby="whatsappTitle" aria-modal="true" hidden>
+    <!-- Modal -->
+    <div class="modal" id="detailModal">
         <div class="modal-content">
-            <h2 id="whatsappTitle">Continue via WhatsApp Bot</h2>
-            <div class="modal-body">
-                <p>Click the button below to open WhatsApp with a pre-filled message containing your case summary.</p>
-                <div class="form-group">
-                    <label for="whatsappNumber" class="form-label">WhatsApp Bot Number (customizable)</label>
-                    <input type="tel" id="whatsappNumber" class="form-control" value="+447000000000">
-                    <p class="hint-text">Change this to your immigration firm's WhatsApp Business number</p>
-                </div>
-                <div class="whatsapp-preview">
-                    <h4>Message Preview:</h4>
-                    <div id="whatsappPreview" class="whatsapp-message-preview"></div>
-                </div>
+            <div class="modal-header">
+                <h2>Case Details</h2>
+                <button class="close-btn">&times;</button>
             </div>
-            <div class="modal-footer">
-                <button id="openWhatsappBtn" class="btn btn--primary">Open WhatsApp</button>
-                <button id="closeWhatsappModal" class="btn btn--outline">Cancel</button>
-            </div>
+            <div class="modal-body" id="modalBody"></div>
         </div>
     </div>
 
-    <script src="storage.js"></script>
-    <script src="gdpr.js"></script>
-    <script src="deadlines.js"></script>
-    <script src="intake.js"></script>
-    <script src="documents.js"></script>
-    <script src="pdf-export.js"></script>
-    <script src="app.js"></script>
+    <!-- Toast Container -->
+    <div id="toastContainer"></div>
+
+    <!-- Scripts -->
+    <script src="js/api.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script src="js/app.js"></script>
 </body>
 </html>
