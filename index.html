@@ -703,7 +703,7 @@
     <div id="toastContainer"></div>
 
     <script>
-        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzNFz5OSclX91bKQzyQLifKJjxsoFfoH9upA-2tQmZnxcF-dMHj2-HWw3w68jYh4j-M/exec";
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby4VaGr818ZE5BMkHBI92HuNPgPA_a-CSSQ97LdRaJRyi8_-003v4ROGrNaw_iNk471/exec";
 
         const App = {
             allCases: [],
@@ -824,38 +824,38 @@
             },
 
             async saveEdit() {
-                if (!this.editingCase) return;
+    if (!this.editingCase) return;
 
-                const updates = {
-                    'Email': document.getElementById('editEmail').value,
-                    'Phone': document.getElementById('editPhone').value,
-                    'Status': document.getElementById('editStatus').value,
-                    'Urgency': document.getElementById('editUrgency').value,
-                    'Docs Received': document.getElementById('editDocs').value
-                };
+    const updates = {
+        'Email': document.getElementById('editEmail').value,
+        'Phone': document.getElementById('editPhone').value,
+        'Status': document.getElementById('editStatus').value,
+        'Urgency': document.getElementById('editUrgency').value,
+        'Docs Received': document.getElementById('editDocs').value
+    };
 
-                try {
-                    const response = await fetch(APPS_SCRIPT_URL, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            action: 'update_case',
-                            caseId: this.editingCase['Case ID'],
-                            updates: updates
-                        })
-                    });
+    try {
+        // IMPORTANT: no headers, mode: 'no-cors'
+        await fetch(APPS_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            body: JSON.stringify({
+                action: 'update_case',
+                caseId: this.editingCase['Case ID'],
+                updates: updates
+            })
+        });
 
-                    if (response.ok) {
-                        this.showToast('✓ Case updated successfully', 'success');
-                        this.cancelEdit();
-                        await this.loadCases();
-                    } else {
-                        this.showToast('Failed to update', 'error');
-                    }
-                } catch (error) {
-                    this.showToast('Error saving', 'error');
-                }
-            },
+        // We can't read response in no-cors mode, so assume success:
+        this.showToast('✓ Case updated successfully', 'success');
+        this.cancelEdit();
+        await this.loadCases();      // pull fresh data from sheet
+    } catch (error) {
+        console.error(error);
+        this.showToast('Error saving case', 'error');
+    }
+}
+,
 
             cancelEdit() {
                 document.getElementById('editMode').classList.remove('active');
