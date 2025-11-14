@@ -368,8 +368,6 @@
             </select>
             <select id="statusFilter" class="filter-select">
                 <option value="">All Status</option>
-                <option value="New - Waiting for docs">Waiting Docs</option>
-                <option value="Documents Received">Docs Received</option>
             </select>
         </div>
 
@@ -448,7 +446,10 @@
     <div id="toastContainer"></div>
 
     <script>
-        const APPS_SCRIPT_URL = "https://script.google.com/macros/u/1/s/AKfycbwrH5IK6DVJMKr6ImlwFmXWsU2xVv6WcH4VGFb4sNaOJ9w3KpLzvk8HIJ1PGi-9DEsf/exec";
+        // ===== CORS PROXY FIX =====
+        // Use a CORS proxy service to bypass CORS restrictions
+        const CORS_PROXY = "https://corsproxy.io/?";
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwrH5IK6DVJMKr6ImlwFmXWsU2xVv6WcH4VGFb4sNaOJ9w3KpLzvk8HIJ1PGi-9DEsf/exec";
 
         const App = {
             allCases: [],
@@ -474,7 +475,9 @@
 
             async loadCases() {
                 try {
-                    const response = await fetch(`${APPS_SCRIPT_URL}?action=get_cases`);
+                    // Use CORS proxy for GET request
+                    const proxyUrl = CORS_PROXY + encodeURIComponent(APPS_SCRIPT_URL + "?action=get_cases");
+                    const response = await fetch(proxyUrl);
                     const data = await response.json();
 
                     if (data.cases && Array.isArray(data.cases)) {
@@ -494,7 +497,7 @@
                         this.updateDashboard();
                     }
                 } catch (error) {
-                    this.showToast('Failed to load cases', 'error');
+                    this.showToast('Failed to load cases: ' + error.message, 'error');
                 }
             },
 
@@ -580,7 +583,10 @@
                 };
 
                 try {
-                    const response = await fetch(APPS_SCRIPT_URL, {
+                    // Use CORS proxy for POST request
+                    const proxyUrl = CORS_PROXY + encodeURIComponent(APPS_SCRIPT_URL);
+                    
+                    const response = await fetch(proxyUrl, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
@@ -635,14 +641,10 @@
                     const parts = note.split(':');
                     if (parts.length === 2) {
                         const [label, value] = parts.map(p => p.trim());
-                        let valueClass = 'unknown';
-                        if (value.toLowerCase().includes('yes')) valueClass = 'yes';
-                        else if (value.toLowerCase().includes('no')) valueClass = 'no';
-
                         container.innerHTML += `
                             <div class="notes-item">
                                 <span class="notes-label">${this.escape(label)}</span>
-                                <span class="notes-value ${valueClass}">${this.escape(value)}</span>
+                                <span class="notes-value">${this.escape(value)}</span>
                             </div>
                         `;
                     }
