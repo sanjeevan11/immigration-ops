@@ -4,85 +4,589 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Immigration Case Management</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📋</text></svg>">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        html, body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #000; color: #fff; line-height: 1.6; }
-        ::-webkit-scrollbar { width: 8px; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
+            background: #000;
+            color: #fff;
+            line-height: 1.6;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* SCROLLBAR STYLING */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
         ::-webkit-scrollbar-track { background: #000; }
-        ::-webkit-scrollbar-thumb { background: #444; border-radius: 4px; }
-        header { background: rgba(0,0,0,0.95); border-bottom: 1px solid rgba(255,255,255,0.1); padding: 0 20px; height: 60px; display: flex; align-items: center; justify-content: space-between; position: fixed; top: 0; left: 0; right: 0; z-index: 100; }
-        .logo { font-size: 18px; font-weight: 600; }
-        .btn { padding: 8px 16px; border-radius: 8px; border: none; font-size: 14px; font-weight: 500; cursor: pointer; background: #333; color: #fff; font-family: inherit; }
-        .btn:hover { background: #444; }
+        ::-webkit-scrollbar-thumb {
+            background: #444;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover { background: #666; }
+
+        /* HEADER */
+        header {
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 0 20px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: -0.3px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: none;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        .btn-secondary {
+            background: #333;
+            color: #fff;
+        }
+        .btn-secondary:hover { background: #444; }
+        .btn-secondary:active { transform: scale(0.98); }
+
         body { padding-top: 60px; }
-        .container { max-width: 1400px; margin: 0 auto; padding: 0 20px; }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
         section { padding: 40px 0; }
-        h1 { font-size: 48px; font-weight: 700; margin-bottom: 16px; }
-        .subtitle { font-size: 16px; color: #999; margin-bottom: 32px; }
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-bottom: 48px; }
-        .stat-card { background: linear-gradient(135deg, #111 0%, #0a0a0a 100%); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 24px; transition: all 0.4s; }
-        .stat-card:hover { border-color: rgba(255,255,255,0.3); transform: translateY(-8px); }
-        .stat-label { font-size: 12px; color: #999; margin-bottom: 8px; }
-        .stat-number { font-size: 42px; font-weight: 700; }
+
+        h1 {
+            font-size: 48px;
+            font-weight: 700;
+            letter-spacing: -1px;
+            margin-bottom: 16px;
+            line-height: 1.1;
+        }
+
+        .section-subtitle {
+            font-size: 16px;
+            color: #999;
+            margin-bottom: 32px;
+        }
+
+        /* STATS GRID */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+            margin-bottom: 48px;
+            perspective: 1000px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #111 0%, #0a0a0a 100%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 24px;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transform: translateY(0);
+            backdrop-filter: blur(10px);
+            animation: slideUp 0.6s ease forwards;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .stat-card:hover {
+            border-color: rgba(255, 255, 255, 0.3);
+            background: linear-gradient(135deg, #1a1a1a 0%, #111 100%);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px rgba(255, 255, 255, 0.1);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .stat-number {
+            font-size: 42px;
+            font-weight: 700;
+            letter-spacing: -1px;
+        }
+
+        /* CASES SECTION */
         .cases-section { margin-top: 48px; }
-        .filter-input { background: rgba(17,17,17,0.8); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 12px 16px; color: #fff; font-family: inherit; font-size: 14px; margin-bottom: 24px; width: 100%; }
+
+        .filters {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .filter-input, .filter-select {
+            background: rgba(17, 17, 17, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 12px 16px;
+            color: #fff;
+            font-family: inherit;
+            font-size: 14px;
+            flex: 1;
+            min-width: 200px;
+            transition: all 0.3s;
+            -webkit-appearance: none;
+        }
+
+        .filter-input:focus, .filter-select:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.3);
+            background: rgba(30, 30, 30, 0.9);
+            box-shadow: 0 8px 32px rgba(255, 255, 255, 0.1);
+        }
+
+        /* CASES CONTAINER */
         .cases-container { display: grid; gap: 12px; }
-        .case-card { background: linear-gradient(135deg, #111 0%, #0a0a0a 100%); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 20px; transition: all 0.3s; cursor: pointer; }
-        .case-card:hover { border-color: rgba(255,255,255,0.3); transform: translateY(-4px); }
-        .case-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        .case-title { font-size: 18px; font-weight: 600; }
-        .urgency-badge { padding: 6px 12px; border-radius: 10px; font-size: 11px; font-weight: 600; }
-        .urgency-normal { background: rgba(100,181,246,0.2); color: #64b5f6; }
-        .urgency-urgent { background: rgba(255,107,107,0.2); color: #ff6b6b; }
-        .case-details { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; }
-        .detail-row { display: flex; flex-direction: column; }
-        .detail-label { font-size: 11px; color: #999; margin-bottom: 6px; }
-        .detail-value { font-size: 13px; }
-        .case-actions { margin-top: 16px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; gap: 10px; }
-        .btn-small { padding: 8px 14px; font-size: 12px; border-radius: 8px; cursor: pointer; border: none; font-family: inherit; background: rgba(255,255,255,0.1); color: #fff; flex: 1; font-weight: 600; }
-        .btn-small:hover { background: rgba(255,255,255,0.2); }
-        .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.95); z-index: 2000; overflow-y: auto; padding: 80px 20px 20px; }
-        .modal.active { display: block; }
-        .modal-content { background: linear-gradient(135deg, #1a1a1a 0%, #111 100%); border: 1px solid rgba(255,255,255,0.2); border-radius: 20px; max-width: 600px; margin: 0 auto; padding: 32px; position: relative; }
-        .modal-close { position: absolute; top: 16px; right: 16px; background: none; border: none; color: #fff; font-size: 28px; cursor: pointer; }
-        .modal h2 { font-size: 24px; margin-bottom: 24px; }
-        .section-title { font-size: 14px; color: #999; margin: 24px 0 12px 0; font-weight: 600; text-transform: uppercase; }
-        .form-group { margin-bottom: 16px; }
-        .form-group label { display: block; font-size: 12px; color: #bbb; margin-bottom: 8px; }
-        .form-group input, .form-group select, .form-group textarea { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 12px 14px; color: #fff; font-family: inherit; font-size: 14px; }
-        .form-group textarea { min-height: 80px; resize: vertical; }
-        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: rgba(100,181,246,0.5); background: rgba(100,181,246,0.05); }
-        .form-group input:disabled, .form-group select:disabled { background: rgba(255,255,255,0.02); color: #999; cursor: not-allowed; }
-        .assessment-grid { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; padding: 12px; background: rgba(255,255,255,0.05); border-radius: 8px; margin-bottom: 8px; }
-        .assessment-label { font-size: 13px; }
-        .assessment-value { padding: 4px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; background: rgba(255,255,255,0.1); color: #ccc; }
-        .assessment-value.yes { background: rgba(76,175,80,0.2); color: #4caf50; }
-        .assessment-value.no { background: rgba(244,67,54,0.2); color: #ff6b6b; }
-        .modal-actions { display: flex; gap: 12px; margin-top: 28px; }
-        .btn-save, .btn-cancel, .btn-edit { flex: 1; padding: 12px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
-        .btn-save { background: #4caf50; color: #fff; }
-        .btn-save:hover { background: #45a049; }
-        .btn-edit { background: rgba(100,181,246,0.2); color: #64b5f6; }
-        .btn-edit:hover { background: rgba(100,181,246,0.3); }
-        .btn-cancel { background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2); }
-        .btn-cancel:hover { background: rgba(255,255,255,0.15); }
-        .empty-state { text-align: center; padding: 60px 20px; color: #666; }
-        .loading { text-align: center; padding: 40px; }
-        .success-toast { position: fixed; bottom: 20px; right: 20px; background: rgba(76,175,80,0.2); border: 1px solid #4caf50; color: #4caf50; padding: 14px 20px; border-radius: 10px; font-size: 13px; z-index: 3000; animation: slideIn 0.3s; }
-        @keyframes slideIn { from { transform: translateX(400px); } to { transform: translateX(0); } }
-        @media (max-width: 768px) { h1 { font-size: 32px; } .modal-content { padding: 20px; } }
+
+        .case-card {
+            background: linear-gradient(135deg, #111 0%, #0a0a0a 100%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 20px;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transform: translateY(0);
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+            animation: slideIn 0.5s ease forwards;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .case-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .case-card:hover::before { left: 100%; }
+
+        .case-card:hover {
+            border-color: rgba(255, 255, 255, 0.3);
+            background: linear-gradient(135deg, #1a1a1a 0%, #111 100%);
+            transform: translateY(-4px);
+            box-shadow: 0 16px 48px rgba(255, 255, 255, 0.1);
+        }
+
+        .case-card:active { transform: translateY(-2px); }
+
+        .case-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .case-title {
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: -0.3px;
+        }
+
+        .urgency-badge {
+            padding: 6px 12px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            backdrop-filter: blur(10px);
+        }
+
+        .urgency-normal {
+            background: rgba(100, 181, 246, 0.2);
+            color: #64b5f6;
+            border: 1px solid rgba(100, 181, 246, 0.3);
+        }
+
+        .urgency-urgent {
+            background: rgba(255, 107, 107, 0.2);
+            color: #ff6b6b;
+            border: 1px solid rgba(255, 107, 107, 0.3);
+        }
+
+        .case-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .detail-row {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .detail-label {
+            font-size: 11px;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .detail-value {
+            font-size: 13px;
+        }
+
+        .case-actions {
+            margin-top: 16px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-edit, .btn-view-more {
+            padding: 10px 14px;
+            font-size: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex: 1;
+            font-weight: 600;
+            border: none;
+            font-family: inherit;
+        }
+
+        .btn-edit {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-edit:active { background: rgba(255, 255, 255, 0.2); }
+
+        .btn-view-more {
+            background: #fff;
+            color: #000;
+        }
+
+        .btn-view-more:active { background: #f0f0f0; }
+
+        /* EDIT MODE */
+        .edit-mode {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+            z-index: 2000;
+            animation: fadeIn 0.3s ease;
+            padding: 80px 20px 20px;
+            overflow-y: auto;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .edit-mode.active { display: flex; }
+
+        .edit-panel {
+            background: linear-gradient(135deg, #1a1a1a 0%, #111 100%);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 32px;
+            max-width: 500px;
+            width: 100%;
+            margin: 0 auto;
+            animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            align-self: center;
+        }
+
+        @keyframes popIn {
+            from { opacity: 0; transform: scale(0.85) translateY(20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .edit-panel h2 {
+            font-size: 24px;
+            margin-bottom: 24px;
+        }
+
+        .edit-field {
+            margin-bottom: 20px;
+        }
+
+        .edit-field label {
+            display: block;
+            font-size: 12px;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .edit-field input, .edit-field select {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 12px 14px;
+            color: #fff;
+            font-family: inherit;
+            font-size: 14px;
+            transition: all 0.3s;
+            -webkit-appearance: none;
+        }
+
+        .edit-field input:focus, .edit-field select:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .edit-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 28px;
+        }
+
+        .btn-save, .btn-cancel {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        .btn-save {
+            background: #fff;
+            color: #000;
+        }
+
+        .btn-save:active { background: #f0f0f0; }
+
+        .btn-cancel {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-cancel:active { background: rgba(255, 255, 255, 0.15); }
+
+        /* MODAL */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .modal-overlay.active { display: flex; align-items: center; justify-content: center; }
+
+        .modal-content {
+            background: linear-gradient(135deg, #1a1a1a 0%, #111 100%);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 24px;
+            padding: 32px 24px;
+            max-width: 500px;
+            max-height: 85vh;
+            width: 95%;
+            overflow-y: auto;
+            animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-title { font-size: 24px; font-weight: 700; }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+            transition: color 0.3s;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:active { color: #fff; }
+
+        .modal-section {
+            margin-bottom: 24px;
+        }
+
+        .modal-section-title {
+            font-size: 12px;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .notes-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .notes-label { font-size: 13px; color: #ccc; }
+
+        .notes-value {
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            min-width: 70px;
+            text-align: center;
+        }
+
+        .notes-value.yes {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4caf50;
+        }
+
+        .notes-value.no {
+            background: rgba(255, 107, 107, 0.2);
+            color: #ff6b6b;
+        }
+
+        .notes-value.unknown {
+            background: rgba(255, 193, 7, 0.2);
+            color: #ffc107;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            padding: 14px 20px;
+            border-radius: 10px;
+            font-size: 13px;
+            z-index: 3000;
+            animation: slideIn 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .toast.success { border-color: rgba(76, 175, 80, 0.3); }
+        .toast.error { border-color: rgba(255, 107, 107, 0.3); }
+
+        @keyframes slideIn {
+            from { transform: translateX(400px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* MOBILE ANIMATIONS */
+        @media (max-width: 768px) {
+            h1 { font-size: 32px; }
+            .stats-grid { gap: 12px; }
+            .stat-card { padding: 18px; }
+            .case-card { padding: 16px; }
+            .case-details { grid-template-columns: 1fr; }
+            .filters { flex-direction: column; }
+            .filter-input, .filter-select { width: 100%; min-width: auto; }
+            .modal-content { padding: 20px 16px; }
+            .edit-panel { padding: 24px; }
+            
+            /* Touch feedback */
+            .btn-edit:active, .btn-view-more:active, .case-card:active {
+                opacity: 0.9;
+            }
+        }
+
+        @media (hover: none) and (pointer: coarse) {
+            .case-card:active { box-shadow: 0 8px 32px rgba(255, 255, 255, 0.1); }
+        }
     </style>
 </head>
 <body>
     <header>
-        <div class="logo">📋 Immigration Cases</div>
-        <button class="btn" onclick="App.refreshData()">↻ Refresh</button>
+        <div class="logo">Immigration Cases</div>
+        <button class="btn btn-secondary" onclick="App.refreshData()">↻ Refresh</button>
     </header>
 
     <section class="container">
         <h1>Case Management</h1>
-        <p class="subtitle">Manage all immigration cases elegantly</p>
+        <p class="section-subtitle">Manage all immigration cases elegantly</p>
     </section>
 
     <section class="container">
@@ -108,42 +612,66 @@
 
     <section class="container cases-section">
         <h2 style="font-size: 28px; margin-bottom: 20px;">Live Cases</h2>
-        <input type="text" id="searchInput" class="filter-input" placeholder="🔍 Search cases by name or ID...">
-        <div class="cases-container" id="casesContainer">
-            <div class="loading">Loading cases...</div>
+
+        <div class="filters">
+            <input type="text" id="searchInput" class="filter-input" placeholder="Search...">
+            <select id="urgencyFilter" class="filter-select">
+                <option value="">All Urgency</option>
+                <option value="Urgent">Urgent</option>
+                <option value="Normal">Normal</option>
+            </select>
+            <select id="statusFilter" class="filter-select">
+                <option value="">All Status</option>
+                <option value="New - Waiting for docs">Waiting Docs</option>
+                <option value="Documents Received">Docs Received</option>
+                <option value="Under Review">Under Review</option>
+            </select>
         </div>
+
+        <div class="cases-container" id="casesContainer"></div>
     </section>
 
-    <!-- Details Modal -->
-    <div class="modal" id="detailsModal">
+    <!-- MODAL -->
+    <div class="modal-overlay" id="modalOverlay">
         <div class="modal-content">
-            <button class="modal-close" onclick="App.closeModal()">×</button>
-            <h2 id="modalTitle">Case Details</h2>
-            
-            <div class="section-title">Case Information</div>
-            <div class="form-group">
-                <label>Name</label>
-                <input type="text" id="detailName" disabled>
+            <div class="modal-header">
+                <div class="modal-title" id="modalName"></div>
+                <button class="modal-close" onclick="App.closeModal()">✕</button>
             </div>
-            <div class="form-group">
-                <label>Case ID</label>
-                <input type="text" id="detailCaseId" disabled>
+            <div class="modal-section">
+                <div class="modal-section-title">Case Info</div>
+                <div class="notes-item">
+                    <span class="notes-label">Case ID</span>
+                    <span class="notes-value" id="modal_case_id"></span>
+                </div>
+                <div class="notes-item">
+                    <span class="notes-label">Email</span>
+                    <span class="notes-value" id="modal_email"></span>
+                </div>
+                <div class="notes-item">
+                    <span class="notes-label">Status</span>
+                    <span class="notes-value" id="modal_status"></span>
+                </div>
             </div>
-            <div class="form-group">
+            <div id="notesSection"></div>
+        </div>
+    </div>
+
+    <!-- EDIT PANEL -->
+    <div class="edit-mode" id="editMode">
+        <div class="edit-panel">
+            <h2>Edit Case</h2>
+            <div class="edit-field">
                 <label>Email</label>
-                <input type="email" id="detailEmail">
+                <input type="email" id="editEmail">
             </div>
-            <div class="form-group">
+            <div class="edit-field">
                 <label>Phone</label>
-                <input type="tel" id="detailPhone">
+                <input type="tel" id="editPhone">
             </div>
-            <div class="form-group">
-                <label>Visa Route</label>
-                <input type="text" id="detailVisaRoute" disabled>
-            </div>
-            <div class="form-group">
+            <div class="edit-field">
                 <label>Status</label>
-                <select id="detailStatus">
+                <select id="editStatus">
                     <option>New - Waiting for docs</option>
                     <option>Documents Received</option>
                     <option>Under Review</option>
@@ -151,269 +679,258 @@
                     <option>Completed</option>
                 </select>
             </div>
-            <div class="form-group">
+            <div class="edit-field">
                 <label>Urgency</label>
-                <select id="detailUrgency">
+                <select id="editUrgency">
                     <option>Normal</option>
                     <option>Urgent</option>
                 </select>
             </div>
-
-            <div class="section-title">Assessment Questions</div>
-            <div id="assessmentContainer"></div>
-
-            <div class="section-title">Additional Notes</div>
-            <div class="form-group">
-                <label>Notes</label>
-                <textarea id="detailNotes" placeholder="Add notes here..."></textarea>
+            <div class="edit-field">
+                <label>Docs Received</label>
+                <select id="editDocs">
+                    <option>No</option>
+                    <option>Yes</option>
+                </select>
             </div>
-
-            <div class="modal-actions">
-                <button class="btn-cancel" onclick="App.closeModal()">Close</button>
-                <button class="btn-edit" id="editBtn" onclick="App.toggleEditMode()">✏️ Edit</button>
-                <button class="btn-save" id="saveBtn" onclick="App.saveCase()" style="display: none;">💾 Save</button>
+            <div class="edit-actions">
+                <button class="btn-save" onclick="App.saveEdit()">Save</button>
+                <button class="btn-cancel" onclick="App.cancelEdit()">Cancel</button>
             </div>
         </div>
     </div>
 
+    <div id="toastContainer"></div>
+
     <script>
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyU3DvPNZEMgeH-P1IT_Rh9Hpv3pLsqm3TlEHd9nXoT313XeZyeznySCJ7WQn0se2QW/exec";
+
         const App = {
             allCases: [],
             filteredCases: [],
-            currentCase: null,
-            isEditMode: false,
-            APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbyU3DvPNZEMgeH-P1IT_Rh9Hpv3pLsqm3TlEHd9nXoT313XeZyeznySCJ7WQn0se2QW/exec",
+            editingCase: null,
 
-            init: function() {
-                document.getElementById('searchInput').addEventListener('input', () => this.filterCases());
-                this.loadCases();
+            async init() {
+                this.setupEventListeners();
+                await this.loadCases();
+                setInterval(() => this.loadCases(), 60000);
             },
 
-            loadCases: function() {
+            setupEventListeners() {
+                document.getElementById('searchInput')?.addEventListener('input', () => this.filterCases());
+                document.getElementById('urgencyFilter')?.addEventListener('change', () => this.filterCases());
+                document.getElementById('statusFilter')?.addEventListener('change', () => this.filterCases());
+                document.getElementById('modalOverlay')?.addEventListener('click', (e) => {
+                    if (e.target.id === 'modalOverlay') this.closeModal();
+                });
+            },
+
+            async loadCases() {
                 try {
-                    fetch(this.APPS_SCRIPT_URL + "?action=get_cases")
-                        .then(r => r.json())
-                        .then(data => {
-                            if (data && data.cases && Array.isArray(data.cases)) {
-                                this.allCases = data.cases;
-                                this.filterCases();
-                                this.updateDashboard();
-                            }
-                        })
-                        .catch(error => {
-                            console.log("Fetch error, trying JSONP...", error);
-                            this.loadCasesJSONP();
-                        });
-                } catch (error) {
-                    this.showError('Failed to load cases');
-                }
-            },
+                    const response = await fetch(`${APPS_SCRIPT_URL}?action=get_cases`);
+                    if (!response.ok) throw new Error('Network error');
+                    const data = await response.json();
 
-            loadCasesJSONP: function() {
-                const script = document.createElement('script');
-                const callback = 'cb_' + Date.now();
-                
-                window[callback] = (data) => {
-                    if (data && data.cases && Array.isArray(data.cases)) {
-                        this.allCases = data.cases;
+                    if (data.cases && Array.isArray(data.cases)) {
+                        this.allCases = data.cases.map(c => ({
+                            'Case ID': c['Case ID'] || '',
+                            'Name': c['Name'] || 'Unknown',
+                            'Email': c['Email'] || '',
+                            'Phone': c['Phone'] || '',
+                            'Urgency': c['Urgency'] || 'Normal',
+                            'Visa Route': c['Visa Route'] || '',
+                            'Status': c['Status'] || '',
+                            'Docs Received': c['Docs Received'] || 'No',
+                            'Date Submitted': c['Date Submitted'] || '',
+                            'Notes': c['Notes'] || ''
+                        }));
                         this.filterCases();
                         this.updateDashboard();
                     }
-                    delete window[callback];
-                    script.remove();
-                };
-                
-                script.onerror = () => {
-                    this.showError('Unable to connect to Apps Script');
-                    delete window[callback];
-                    script.remove();
-                };
-                
-                script.src = this.APPS_SCRIPT_URL + "?action=get_cases&callback=" + callback;
-                document.head.appendChild(script);
+                } catch (error) {
+                    this.showToast('Failed to load cases', 'error');
+                }
             },
 
-            filterCases: function() {
-                const search = document.getElementById('searchInput').value.toLowerCase();
+            filterCases() {
+                const search = (document.getElementById('searchInput')?.value || '').toLowerCase();
+                const urgency = document.getElementById('urgencyFilter')?.value || '';
+                const status = document.getElementById('statusFilter')?.value || '';
+
                 this.filteredCases = this.allCases.filter(c => {
-                    return !search || 
-                           (c['Name'] || '').toLowerCase().includes(search) || 
-                           (c['Case ID'] || '').toLowerCase().includes(search);
+                    const matchesSearch = !search || 
+                        c['Case ID'].toLowerCase().includes(search) ||
+                        c['Name'].toLowerCase().includes(search) ||
+                        c['Email'].toLowerCase().includes(search);
+                    
+                    return matchesSearch && (!urgency || c['Urgency'] === urgency) && (!status || c['Status'] === status);
                 });
+
                 this.renderCases();
             },
 
-            renderCases: function() {
+            renderCases() {
                 const container = document.getElementById('casesContainer');
                 container.innerHTML = '';
-                
+
                 if (this.filteredCases.length === 0) {
-                    container.innerHTML = '<div class="empty-state">No cases found</div>';
+                    container.innerHTML = '<div class="empty-state"><p>No cases found</p></div>';
                     return;
                 }
-                
+
                 this.filteredCases.forEach((c) => {
-                    const urgencyClass = (c['Urgency'] || '').toLowerCase() === 'urgent' ? 'urgency-urgent' : 'urgency-normal';
-                    const name = c['Name'] || 'Unknown';
-                    const caseId = c['Case ID'] || '';
-                    const email = c['Email'] || '';
-                    const phone = c['Phone'] || '';
-                    const status = c['Status'] || '';
-                    
+                    const urgencyClass = c['Urgency'] === 'Urgent' ? 'urgency-urgent' : 'urgency-normal';
                     container.innerHTML += `
                         <div class="case-card">
                             <div class="case-header">
-                                <div class="case-title">${this.escape(name)}</div>
-                                <span class="urgency-badge ${urgencyClass}">${c['Urgency'] || 'Normal'}</span>
+                                <div class="case-title">${this.escape(c['Name'])}</div>
+                                <span class="urgency-badge ${urgencyClass}">${c['Urgency']}</span>
                             </div>
                             <div class="case-details">
-                                <div class="detail-row"><div class="detail-label">Case ID</div><div class="detail-value">${this.escape(caseId)}</div></div>
-                                <div class="detail-row"><div class="detail-label">Email</div><div class="detail-value">${this.escape(email)}</div></div>
-                                <div class="detail-row"><div class="detail-label">Phone</div><div class="detail-value">${this.escape(phone)}</div></div>
-                                <div class="detail-row"><div class="detail-label">Status</div><div class="detail-value">${this.escape(status)}</div></div>
+                                <div class="detail-row">
+                                    <div class="detail-label">Case ID</div>
+                                    <div class="detail-value">${this.escape(c['Case ID'])}</div>
+                                </div>
+                                <div class="detail-row">
+                                    <div class="detail-label">Email</div>
+                                    <div class="detail-value">${this.escape(c['Email'])}</div>
+                                </div>
+                                <div class="detail-row">
+                                    <div class="detail-label">Status</div>
+                                    <div class="detail-value">${this.escape(c['Status'])}</div>
+                                </div>
                             </div>
                             <div class="case-actions">
-                                <button class="btn-small" onclick="App.viewDetails('${this.escape(caseId)}')">👁️ Details</button>
+                                <button class="btn-edit" onclick="event.stopPropagation(); App.startEdit('${this.escape(c['Case ID'])}')">Edit</button>
+                                <button class="btn-view-more" onclick="event.stopPropagation(); App.openModal('${this.escape(c['Case ID'])}')">Details →</button>
                             </div>
                         </div>
                     `;
                 });
             },
 
-            viewDetails: function(caseId) {
+            startEdit(caseId) {
                 const caseData = this.allCases.find(c => c['Case ID'] === caseId);
                 if (!caseData) return;
-                
-                this.currentCase = caseData;
-                this.isEditMode = false;
-                
-                document.getElementById('modalTitle').textContent = this.escape(caseData['Name'] || 'Case Details');
-                document.getElementById('detailName').value = caseData['Name'] || '';
-                document.getElementById('detailCaseId').value = caseData['Case ID'] || '';
-                document.getElementById('detailEmail').value = caseData['Email'] || '';
-                document.getElementById('detailPhone').value = caseData['Phone'] || '';
-                document.getElementById('detailVisaRoute').value = caseData['Visa Route'] || '';
-                document.getElementById('detailStatus').value = caseData['Status'] || 'New - Waiting for docs';
-                document.getElementById('detailUrgency').value = caseData['Urgency'] || 'Normal';
-                document.getElementById('detailNotes').value = caseData['Notes'] || '';
-                
-                // Build assessment section
-                const assessmentContainer = document.getElementById('assessmentContainer');
-                assessmentContainer.innerHTML = '';
-                
-                const assessmentFields = [
-                    'Course <6 months (11 for English)?',
-                    'Licensed provider?',
-                    'Funds for stay?',
-                    'Intend leave after?',
-                    'No work?',
-                    'Refusals?',
-                    'English course?',
-                    'TB test?',
-                    'From low-risk?',
-                    'Recreational study?'
-                ];
-                
-                assessmentFields.forEach(field => {
-                    const value = caseData[field] || '';
-                    const isYes = value.toLowerCase() === 'yes' ? 'yes' : (value.toLowerCase() === 'no' ? 'no' : '');
-                    assessmentContainer.innerHTML += `
-                        <div class="assessment-grid">
-                            <div class="assessment-label">${this.escape(field)}</div>
-                            <div class="assessment-value ${isYes}">${value || '—'}</div>
-                        </div>
-                    `;
-                });
-                
-                this.updateButtonsForViewMode();
-                document.getElementById('detailsModal').classList.add('active');
+
+                this.editingCase = caseData;
+                document.getElementById('editEmail').value = caseData['Email'];
+                document.getElementById('editPhone').value = caseData['Phone'];
+                document.getElementById('editStatus').value = caseData['Status'];
+                document.getElementById('editUrgency').value = caseData['Urgency'];
+                document.getElementById('editDocs').value = caseData['Docs Received'];
+                document.getElementById('editMode').classList.add('active');
+                document.body.style.overflow = 'hidden';
             },
 
-            toggleEditMode: function() {
-                this.isEditMode = !this.isEditMode;
-                const editableFields = ['detailEmail', 'detailPhone', 'detailStatus', 'detailUrgency', 'detailNotes'];
-                const editBtn = document.getElementById('editBtn');
-                const saveBtn = document.getElementById('saveBtn');
-                
-                editableFields.forEach(fieldId => {
-                    const field = document.getElementById(fieldId);
-                    field.disabled = !this.isEditMode;
-                });
-                
-                if (this.isEditMode) {
-                    editBtn.style.display = 'none';
-                    saveBtn.style.display = 'block';
-                } else {
-                    editBtn.style.display = 'block';
-                    saveBtn.style.display = 'none';
+            async saveEdit() {
+                if (!this.editingCase) return;
+
+                const updates = {
+                    'Email': document.getElementById('editEmail').value,
+                    'Phone': document.getElementById('editPhone').value,
+                    'Status': document.getElementById('editStatus').value,
+                    'Urgency': document.getElementById('editUrgency').value,
+                    'Docs Received': document.getElementById('editDocs').value
+                };
+
+                try {
+                    const response = await fetch(APPS_SCRIPT_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            action: 'update_case',
+                            caseId: this.editingCase['Case ID'],
+                            updates: updates
+                        })
+                    });
+
+                    if (response.ok) {
+                        this.showToast('✓ Case updated successfully', 'success');
+                        this.cancelEdit();
+                        await this.loadCases();
+                    } else {
+                        this.showToast('Failed to update', 'error');
+                    }
+                } catch (error) {
+                    this.showToast('Error saving', 'error');
                 }
             },
 
-            updateButtonsForViewMode: function() {
-                document.getElementById('editBtn').style.display = 'block';
-                document.getElementById('saveBtn').style.display = 'none';
+            cancelEdit() {
+                document.getElementById('editMode').classList.remove('active');
+                document.body.style.overflow = 'auto';
+                this.editingCase = null;
             },
 
-            saveCase: function() {
-                if (!this.currentCase) return;
-                
-                const updates = {
-                    'Email': document.getElementById('detailEmail').value,
-                    'Phone': document.getElementById('detailPhone').value,
-                    'Status': document.getElementById('detailStatus').value,
-                    'Urgency': document.getElementById('detailUrgency').value,
-                    'Notes': document.getElementById('detailNotes').value
-                };
-                
-                const payload = new FormData();
-                payload.append('data', JSON.stringify({
-                    action: 'update_case',
-                    caseId: this.currentCase['Case ID'],
-                    updates: updates
-                }));
-                
-                fetch(this.APPS_SCRIPT_URL, { method: 'POST', payload: payload })
-                    .catch(() => {});
-                
-                this.showSuccess('Case updated successfully!');
-                setTimeout(() => {
-                    this.isEditMode = false;
-                    this.closeModal();
-                    this.loadCases();
-                }, 1000);
+            openModal(caseId) {
+                const caseData = this.allCases.find(c => c['Case ID'] === caseId);
+                if (!caseData) return;
+
+                document.getElementById('modalName').textContent = caseData['Name'];
+                document.getElementById('modal_case_id').textContent = caseData['Case ID'];
+                document.getElementById('modal_email').textContent = caseData['Email'];
+                document.getElementById('modal_status').textContent = caseData['Status'];
+
+                this.renderNotes(caseData['Notes']);
+                document.getElementById('modalOverlay').classList.add('active');
+                document.body.style.overflow = 'hidden';
             },
 
-            closeModal: function() {
-                document.getElementById('detailsModal').classList.remove('active');
-                this.isEditMode = false;
-                this.currentCase = null;
+            renderNotes(notesText) {
+                const section = document.getElementById('notesSection');
+                section.innerHTML = '';
+
+                if (!notesText || notesText.trim() === '') return;
+
+                section.innerHTML = '<div class="modal-section"><div class="modal-section-title">Assessment</div><div id="notesContainer"></div></div>';
+                const container = document.getElementById('notesContainer');
+
+                notesText.split('\n').filter(n => n.trim()).forEach(note => {
+                    const [label, value] = note.split(':').map(p => p.trim());
+                    if (label && value) {
+                        let valueClass = 'unknown';
+                        if (value.toLowerCase().includes('yes')) valueClass = 'yes';
+                        else if (value.toLowerCase().includes('no')) valueClass = 'no';
+
+                        container.innerHTML += `
+                            <div class="notes-item">
+                                <span class="notes-label">${this.escape(label)}</span>
+                                <span class="notes-value ${valueClass}">${this.escape(value)}</span>
+                            </div>
+                        `;
+                    }
+                });
             },
 
-            updateDashboard: function() {
-                document.getElementById('totalCases').textContent = this.allCases.length;
-                document.getElementById('urgentCases').textContent = this.allCases.filter(c => (c['Urgency'] || '').toLowerCase() === 'urgent').length;
-                document.getElementById('pendingCases').textContent = this.allCases.filter(c => (c['Status'] || '').includes('Waiting')).length;
-                document.getElementById('newCases').textContent = this.allCases.filter(c => (c['Status'] || '').includes('New')).length;
+            closeModal() {
+                document.getElementById('modalOverlay').classList.remove('active');
+                document.body.style.overflow = 'auto';
             },
 
-            refreshData: function() {
-                document.getElementById('casesContainer').innerHTML = '<div class="loading">Loading cases...</div>';
-                this.loadCases();
+            updateDashboard() {
+                const total = this.allCases.length;
+                const urgent = this.allCases.filter(c => c['Urgency'] === 'Urgent').length;
+                const pending = this.allCases.filter(c => c['Status']?.includes('Waiting')).length;
+                const newCases = this.allCases.filter(c => c['Status']?.includes('New')).length;
+
+                document.getElementById('totalCases').textContent = total;
+                document.getElementById('urgentCases').textContent = urgent;
+                document.getElementById('pendingCases').textContent = pending;
+                document.getElementById('newCases').textContent = newCases;
             },
 
-            showError: function(msg) {
-                document.getElementById('casesContainer').innerHTML = '<div class="empty-state" style="color: #ff6b6b;">' + msg + '</div>';
-            },
+            refreshData() { this.loadCases(); },
 
-            showSuccess: function(msg) {
+            showToast(message, type = 'success') {
                 const toast = document.createElement('div');
-                toast.className = 'success-toast';
-                toast.textContent = msg;
-                document.body.appendChild(toast);
+                toast.className = `toast ${type}`;
+                toast.textContent = message;
+                document.getElementById('toastContainer').appendChild(toast);
                 setTimeout(() => toast.remove(), 3000);
             },
 
-            escape: function(text) {
+            escape(text) {
                 if (!text) return '';
                 const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
                 return String(text).replace(/[&<>"']/g, m => map[m]);
