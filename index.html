@@ -16,19 +16,41 @@
             background: #000;
             color: #fff;
             line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* SCROLLBAR STYLING */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #000;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #444;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #666;
         }
 
         /* HEADER */
         header {
-            background: #000;
-            border-bottom: 1px solid #333;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             padding: 0 24px;
             height: 60px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            position: sticky;
+            position: fixed;
             top: 0;
+            left: 0;
+            right: 0;
             z-index: 100;
         }
 
@@ -55,15 +77,6 @@
             font-family: inherit;
         }
 
-        .btn-primary {
-            background: #fff;
-            color: #000;
-        }
-
-        .btn-primary:hover {
-            background: #f5f5f5;
-        }
-
         .btn-secondary {
             background: #333;
             color: #fff;
@@ -74,6 +87,10 @@
         }
 
         /* MAIN CONTENT */
+        body {
+            padding-top: 60px;
+        }
+
         .container {
             max-width: 1400px;
             margin: 0 auto;
@@ -98,25 +115,30 @@
             margin-bottom: 40px;
         }
 
-        /* STATS GRID */
+        /* STATS GRID - OVERLAPPING EFFECT */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 24px;
             margin-bottom: 60px;
+            perspective: 1000px;
         }
 
         .stat-card {
-            background: #111;
-            border: 1px solid #333;
-            border-radius: 12px;
+            background: linear-gradient(135deg, #111 0%, #0a0a0a 100%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
             padding: 32px;
-            transition: all 0.3s;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transform: translateY(0);
+            backdrop-filter: blur(10px);
         }
 
         .stat-card:hover {
-            border-color: #555;
-            background: #161616;
+            border-color: rgba(255, 255, 255, 0.3);
+            background: linear-gradient(135deg, #1a1a1a 0%, #111 100%);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px rgba(255, 255, 255, 0.1);
         }
 
         .stat-label {
@@ -133,7 +155,7 @@
             letter-spacing: -1px;
         }
 
-        /* CASES TABLE */
+        /* CASES SECTION */
         .cases-section {
             margin-top: 80px;
         }
@@ -143,46 +165,74 @@
             gap: 12px;
             margin-bottom: 32px;
             flex-wrap: wrap;
+            backdrop-filter: blur(10px);
         }
 
         .filter-input, .filter-select {
-            background: #111;
-            border: 1px solid #333;
-            border-radius: 8px;
+            background: rgba(17, 17, 17, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
             padding: 10px 16px;
             color: #fff;
             font-family: inherit;
             font-size: 14px;
             flex: 1;
             min-width: 200px;
-            transition: border-color 0.3s;
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
         }
 
         .filter-input:focus, .filter-select:focus {
             outline: none;
-            border-color: #666;
+            border-color: rgba(255, 255, 255, 0.3);
+            background: rgba(30, 30, 30, 0.9);
+            box-shadow: 0 8px 32px rgba(255, 255, 255, 0.1);
         }
 
-        .filter-input::placeholder {
-            color: #666;
-        }
-
+        /* CASES CONTAINER - STAGGERED/OVERLAPPING */
         .cases-container {
             display: grid;
             gap: 16px;
+            position: relative;
         }
 
         .case-card {
-            background: #111;
-            border: 1px solid #333;
-            border-radius: 12px;
+            background: linear-gradient(135deg, #111 0%, #0a0a0a 100%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
             padding: 24px;
-            transition: all 0.3s;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transform: translateY(0);
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .case-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .case-card:hover::before {
+            left: 100%;
         }
 
         .case-card:hover {
-            border-color: #555;
-            background: #161616;
+            border-color: rgba(255, 255, 255, 0.3);
+            background: linear-gradient(135deg, #1a1a1a 0%, #111 100%);
+            transform: translateY(-6px);
+            box-shadow: 0 20px 60px rgba(255, 255, 255, 0.1);
+        }
+
+        .case-card.clickable:hover {
+            cursor: pointer;
         }
 
         .case-header {
@@ -191,31 +241,35 @@
             align-items: flex-start;
             margin-bottom: 24px;
             padding-bottom: 16px;
-            border-bottom: 1px solid #333;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .case-title {
             font-size: 20px;
             font-weight: 600;
+            letter-spacing: -0.3px;
         }
 
         .urgency-badge {
-            padding: 6px 12px;
-            border-radius: 6px;
+            padding: 6px 14px;
+            border-radius: 12px;
             font-size: 12px;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            backdrop-filter: blur(10px);
         }
 
         .urgency-normal {
-            background: #1a1a2e;
+            background: rgba(100, 181, 246, 0.2);
             color: #64b5f6;
+            border: 1px solid rgba(100, 181, 246, 0.3);
         }
 
         .urgency-urgent {
-            background: #2e1a1a;
+            background: rgba(255, 107, 107, 0.2);
             color: #ff6b6b;
+            border: 1px solid rgba(255, 107, 107, 0.3);
         }
 
         .case-details {
@@ -241,74 +295,180 @@
             font-size: 14px;
         }
 
-        .detail-editable {
+        .case-actions {
+            margin-top: 24px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
-            gap: 8px;
-            align-items: center;
-        }
-
-        .detail-input, .detail-select {
-            background: #222;
-            border: 1px solid #444;
-            border-radius: 6px;
-            padding: 8px 12px;
-            color: #fff;
-            font-family: inherit;
-            font-size: 13px;
-            flex: 1;
-        }
-
-        .detail-input:focus, .detail-select:focus {
-            outline: none;
-            border-color: #666;
-            background: #252525;
+            gap: 12px;
         }
 
         .btn-edit {
-            padding: 6px 12px;
-            font-size: 12px;
-            background: #333;
+            padding: 8px 16px;
+            font-size: 13px;
+            background: rgba(255, 255, 255, 0.1);
             color: #fff;
-            border: 1px solid #555;
-            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s;
+            flex: 1;
         }
 
         .btn-edit:hover {
-            background: #444;
-            border-color: #666;
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.4);
         }
 
-        .btn-save {
-            padding: 6px 12px;
-            font-size: 12px;
+        .btn-view-more {
+            padding: 8px 16px;
+            font-size: 13px;
             background: #fff;
             color: #000;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
             transition: all 0.3s;
+            flex: 1;
         }
 
-        .btn-save:hover {
+        .btn-view-more:hover {
             background: #f0f0f0;
+            transform: scale(1.05);
         }
 
-        .btn-cancel {
-            padding: 6px 12px;
-            font-size: 12px;
-            background: #333;
-            color: #fff;
-            border: 1px solid #555;
-            border-radius: 6px;
+        /* MODAL POPUP */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; backdrop-filter: blur(0px); }
+            to { opacity: 1; backdrop-filter: blur(10px); }
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #1a1a1a 0%, #111 100%);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 28px;
+            padding: 40px;
+            max-width: 600px;
+            max-height: 85vh;
+            overflow-y: auto;
+            animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            backdrop-filter: blur(20px);
+        }
+
+        @keyframes popIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-title {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .modal-close {
+            font-size: 24px;
             cursor: pointer;
-            transition: all 0.3s;
+            background: none;
+            border: none;
+            color: #999;
+            transition: color 0.3s;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .btn-cancel:hover {
-            background: #444;
+        .modal-close:hover {
+            color: #fff;
+        }
+
+        .modal-section {
+            margin-bottom: 32px;
+        }
+
+        .modal-section-title {
+            font-size: 14px;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 16px;
+        }
+
+        .notes-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .notes-label {
+            font-size: 14px;
+            color: #ccc;
+        }
+
+        .notes-value {
+            font-size: 14px;
+            font-weight: 600;
+            padding: 4px 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .notes-value.yes {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4caf50;
+        }
+
+        .notes-value.no {
+            background: rgba(255, 107, 107, 0.2);
+            color: #ff6b6b;
+        }
+
+        .notes-value.unknown {
+            background: rgba(255, 193, 7, 0.2);
+            color: #ffc107;
         }
 
         .empty-state {
@@ -317,32 +477,27 @@
             color: #666;
         }
 
-        .empty-state p {
-            font-size: 16px;
-        }
-
         .toast {
             position: fixed;
             bottom: 20px;
             right: 20px;
-            background: #222;
-            border: 1px solid #444;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             color: #fff;
             padding: 16px 24px;
-            border-radius: 8px;
+            border-radius: 12px;
             font-size: 14px;
             z-index: 2000;
             animation: slideIn 0.3s ease;
+            backdrop-filter: blur(10px);
         }
 
         .toast.success {
-            border-color: #4caf50;
-            background: #1b3d1b;
+            border-color: rgba(76, 175, 80, 0.3);
         }
 
         .toast.error {
-            border-color: #ff6b6b;
-            background: #3d1b1b;
+            border-color: rgba(255, 107, 107, 0.3);
         }
 
         @keyframes slideIn {
@@ -355,13 +510,13 @@
             .stats-grid { grid-template-columns: 1fr; }
             .case-details { grid-template-columns: 1fr; }
             .filters { flex-direction: column; }
-            .filter-input, .filter-select { width: 100%; }
+            .modal-content { max-width: 90vw; padding: 24px; }
         }
     </style>
 </head>
 <body>
     <header>
-        <div class="logo">Immigration Case Manager</div>
+        <div class="logo">Immigration Cases</div>
         <div class="header-actions">
             <button class="btn btn-secondary" onclick="App.refreshData()">↻ Refresh</button>
         </div>
@@ -369,7 +524,7 @@
 
     <section class="container">
         <h1>Case Management</h1>
-        <p class="section-subtitle">Manage all immigration cases in one place</p>
+        <p class="section-subtitle">Manage all immigration cases elegantly</p>
     </section>
 
     <section class="container">
@@ -383,11 +538,11 @@
                 <div class="stat-number" id="urgentCases" style="color: #ff6b6b;">0</div>
             </div>
             <div class="stat-card">
-                <div class="stat-label">Pending Docs</div>
+                <div class="stat-label">Pending</div>
                 <div class="stat-number" id="pendingCases">0</div>
             </div>
             <div class="stat-card">
-                <div class="stat-label">New Cases</div>
+                <div class="stat-label">New</div>
                 <div class="stat-number" id="newCases">0</div>
             </div>
         </div>
@@ -416,15 +571,56 @@
         <div class="cases-container" id="casesContainer"></div>
     </section>
 
+    <!-- MODAL POPUP -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div>
+                    <div class="modal-title" id="modalName"></div>
+                </div>
+                <button class="modal-close" onclick="App.closeModal()">✕</button>
+            </div>
+
+            <div class="modal-section">
+                <div class="modal-section-title">Case Information</div>
+                <div class="notes-item">
+                    <span class="notes-label">Case ID</span>
+                    <span class="notes-value" id="modal_case_id"></span>
+                </div>
+                <div class="notes-item">
+                    <span class="notes-label">Email</span>
+                    <span class="notes-value" id="modal_email"></span>
+                </div>
+                <div class="notes-item">
+                    <span class="notes-label">Phone</span>
+                    <span class="notes-value" id="modal_phone"></span>
+                </div>
+                <div class="notes-item">
+                    <span class="notes-label">Visa Route</span>
+                    <span class="notes-value" id="modal_visa"></span>
+                </div>
+                <div class="notes-item">
+                    <span class="notes-label">Status</span>
+                    <span class="notes-value" id="modal_status"></span>
+                </div>
+            </div>
+
+            <div class="modal-section" id="notesSection">
+                <div class="modal-section-title">Assessment Details</div>
+                <div id="notesContainer"></div>
+            </div>
+        </div>
+    </div>
+
     <div id="toastContainer"></div>
 
     <script>
-        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwjhRV8Tlgscre6rCTM78bcFJwi_3ho5JzioT0JYF4vnq7WP_cmLYv0QSJu6j_r0E8B/exec";
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzc8udblouZ2GOkaimcGeQrvtkbQ447lvSoiRNvLCsT4rsD-grTcaR56pIFrB6ZrPoj/exec";
 
         const App = {
             allCases: [],
             filteredCases: [],
-            editingCaseId: null,
+            currentCase: null,
 
             async init() {
                 this.setupEventListeners();
@@ -436,6 +632,9 @@
                 document.getElementById('searchInput')?.addEventListener('input', () => this.filterCases());
                 document.getElementById('urgencyFilter')?.addEventListener('change', () => this.filterCases());
                 document.getElementById('statusFilter')?.addEventListener('change', () => this.filterCases());
+                document.getElementById('modalOverlay')?.addEventListener('click', (e) => {
+                    if (e.target.id === 'modalOverlay') this.closeModal();
+                });
             },
 
             async loadCases() {
@@ -445,20 +644,18 @@
                     const data = await response.json();
 
                     if (data.cases && Array.isArray(data.cases)) {
-                        this.allCases = data.cases.map(c => {
-                            return {
-                                'Case ID': c['Case ID'] || '',
-                                'Name': c['Name'] || 'Unknown',
-                                'Email': c['Email'] || '',
-                                'Phone': c['Phone'] || '',
-                                'Urgency': c['Urgency'] || 'Normal',
-                                'Visa Route': c['Visa Route'] || '',
-                                'Status': c['Status'] || '',
-                                'Docs Received': c['Docs Received'] || 'No',
-                                'Date Submitted': c['Date Submitted'] || '',
-                                'Notes': c['Notes'] || ''
-                            };
-                        });
+                        this.allCases = data.cases.map(c => ({
+                            'Case ID': c['Case ID'] || '',
+                            'Name': c['Name'] || 'Unknown',
+                            'Email': c['Email'] || '',
+                            'Phone': c['Phone'] || '',
+                            'Urgency': c['Urgency'] || 'Normal',
+                            'Visa Route': c['Visa Route'] || '',
+                            'Status': c['Status'] || '',
+                            'Docs Received': c['Docs Received'] || 'No',
+                            'Date Submitted': c['Date Submitted'] || '',
+                            'Notes': c['Notes'] || ''
+                        }));
                         this.filterCases();
                         this.updateDashboard();
                     }
@@ -497,133 +694,100 @@
                     return;
                 }
 
-                this.filteredCases.forEach((c, idx) => {
-                    const isEditing = this.editingCaseId === c['Case ID'];
+                this.filteredCases.forEach((c) => {
                     const urgencyClass = c['Urgency'] === 'Urgent' ? 'urgency-urgent' : 'urgency-normal';
 
                     container.innerHTML += `
-                        <div class="case-card">
+                        <div class="case-card clickable" onclick="App.openModal('${this.escape(c['Case ID'])}')">
                             <div class="case-header">
                                 <div class="case-title">${this.escape(c['Name'])}</div>
                                 <span class="urgency-badge ${urgencyClass}">${c['Urgency']}</span>
                             </div>
                             <div class="case-details">
-                                ${this.renderDetail('Case ID', c['Case ID'], 'Case ID', false, c)}
-                                ${this.renderDetail('Email', c['Email'], 'Email', isEditing, c)}
-                                ${this.renderDetail('Phone', c['Phone'], 'Phone', isEditing, c)}
-                                ${this.renderDetail('Visa Route', c['Visa Route'], 'Visa Route', false, c)}
-                                ${this.renderDetail('Status', c['Status'], 'Status', isEditing, c, 'status')}
-                                ${this.renderDetail('Docs Received', c['Docs Received'], 'Docs Received', isEditing, c, 'docs')}
-                                ${this.renderDetail('Urgency', c['Urgency'], 'Urgency', isEditing, c, 'urgency')}
-                                ${this.renderDetail('Submitted', c['Date Submitted'], 'Date Submitted', false, c)}
+                                <div class="detail-row">
+                                    <div class="detail-label">Case ID</div>
+                                    <div class="detail-value">${this.escape(c['Case ID'])}</div>
+                                </div>
+                                <div class="detail-row">
+                                    <div class="detail-label">Email</div>
+                                    <div class="detail-value">${this.escape(c['Email'])}</div>
+                                </div>
+                                <div class="detail-row">
+                                    <div class="detail-label">Phone</div>
+                                    <div class="detail-value">${this.escape(c['Phone'])}</div>
+                                </div>
+                                <div class="detail-row">
+                                    <div class="detail-label">Visa Route</div>
+                                    <div class="detail-value">${this.escape(c['Visa Route'])}</div>
+                                </div>
                             </div>
-                            <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid #333; display: flex; gap: 12px;">
-                                ${!isEditing ? `<button class="btn-edit" onclick="App.editCase('${c['Case ID']}')">Edit</button>` : `
-                                    <button class="btn-save" onclick="App.saveCase('${c['Case ID']}')">Save Changes</button>
-                                    <button class="btn-cancel" onclick="App.cancelEdit()">Cancel</button>
-                                `}
+                            <div class="case-actions">
+                                <button class="btn-edit" onclick="event.stopPropagation(); App.editCase('${this.escape(c['Case ID'])}')">Edit</button>
+                                <button class="btn-view-more" onclick="event.stopPropagation(); App.openModal('${this.escape(c['Case ID'])}')">View Details →</button>
                             </div>
                         </div>
                     `;
                 });
             },
 
-            renderDetail(label, value, field, isEditing, caseData, type = 'text') {
-                if (!isEditing) {
-                    return `
-                        <div class="detail-row">
-                            <div class="detail-label">${label}</div>
-                            <div class="detail-value">${this.escape(value)}</div>
-                        </div>
-                    `;
+            openModal(caseId) {
+                const caseData = this.allCases.find(c => c['Case ID'] === caseId);
+                if (!caseData) return;
+
+                this.currentCase = caseData;
+
+                document.getElementById('modalName').textContent = caseData['Name'];
+                document.getElementById('modal_case_id').textContent = caseData['Case ID'];
+                document.getElementById('modal_email').textContent = caseData['Email'];
+                document.getElementById('modal_phone').textContent = caseData['Phone'];
+                document.getElementById('modal_visa').textContent = caseData['Visa Route'];
+                document.getElementById('modal_status').textContent = caseData['Status'];
+
+                this.renderNotes(caseData['Notes']);
+
+                document.getElementById('modalOverlay').classList.add('active');
+                document.body.style.overflow = 'hidden';
+            },
+
+            renderNotes(notesText) {
+                const container = document.getElementById('notesContainer');
+                container.innerHTML = '';
+
+                if (!notesText || notesText.trim() === '') {
+                    container.innerHTML = '<p style="color: #666;">No additional notes available</p>';
+                    return;
                 }
 
-                if (type === 'status') {
-                    return `
-                        <div class="detail-row">
-                            <div class="detail-label">${label}</div>
-                            <select class="detail-select" id="edit_${field}" data-case="${caseData['Case ID']}">
-                                <option ${value === 'New - Waiting for docs' ? 'selected' : ''}>New - Waiting for docs</option>
-                                <option ${value === 'Documents Received' ? 'selected' : ''}>Documents Received</option>
-                                <option ${value === 'Under Review' ? 'selected' : ''}>Under Review</option>
-                                <option ${value === 'In Progress' ? 'selected' : ''}>In Progress</option>
-                                <option ${value === 'Completed' ? 'selected' : ''}>Completed</option>
-                            </select>
-                        </div>
-                    `;
-                } else if (type === 'urgency') {
-                    return `
-                        <div class="detail-row">
-                            <div class="detail-label">${label}</div>
-                            <select class="detail-select" id="edit_${field}" data-case="${caseData['Case ID']}">
-                                <option ${value === 'Normal' ? 'selected' : ''}>Normal</option>
-                                <option ${value === 'Urgent' ? 'selected' : ''}>Urgent</option>
-                            </select>
-                        </div>
-                    `;
-                } else if (type === 'docs') {
-                    return `
-                        <div class="detail-row">
-                            <div class="detail-label">${label}</div>
-                            <select class="detail-select" id="edit_${field}" data-case="${caseData['Case ID']}">
-                                <option ${value === 'No' ? 'selected' : ''}>No</option>
-                                <option ${value === 'Yes' ? 'selected' : ''}>Yes</option>
-                            </select>
-                        </div>
-                    `;
-                } else {
-                    return `
-                        <div class="detail-row">
-                            <div class="detail-label">${label}</div>
-                            <input type="text" class="detail-input" id="edit_${field}" value="${this.escape(value)}" data-case="${caseData['Case ID']}">
-                        </div>
-                    `;
-                }
+                const notesArray = notesText.split('\n').filter(n => n.trim());
+                
+                notesArray.forEach(note => {
+                    const parts = note.split(':').map(p => p.trim());
+                    if (parts.length === 2) {
+                        const [label, value] = parts;
+                        let valueClass = 'unknown';
+                        
+                        if (value.toLowerCase().includes('yes')) valueClass = 'yes';
+                        else if (value.toLowerCase().includes('no')) valueClass = 'no';
+                        else if (value.toLowerCase().includes("don't know")) valueClass = 'unknown';
+
+                        container.innerHTML += `
+                            <div class="notes-item">
+                                <span class="notes-label">${label}</span>
+                                <span class="notes-value ${valueClass}">${value}</span>
+                            </div>
+                        `;
+                    }
+                });
+            },
+
+            closeModal() {
+                document.getElementById('modalOverlay').classList.remove('active');
+                document.body.style.overflow = 'auto';
+                this.currentCase = null;
             },
 
             editCase(caseId) {
-                this.editingCaseId = caseId;
-                this.renderCases();
-            },
-
-            cancelEdit() {
-                this.editingCaseId = null;
-                this.renderCases();
-            },
-
-            async saveCase(caseId) {
-                const updates = {};
-                const fields = ['Email', 'Phone', 'Status', 'Docs Received', 'Urgency'];
-
-                fields.forEach(field => {
-                    const el = document.getElementById(`edit_${field}`);
-                    if (el) {
-                        updates[field] = el.value;
-                    }
-                });
-
-                try {
-                    const response = await fetch(APPS_SCRIPT_URL, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            action: 'update_case',
-                            caseId: caseId,
-                            updates: updates
-                        })
-                    });
-
-                    if (response.ok) {
-                        this.showToast('✓ Case updated successfully', 'success');
-                        this.editingCaseId = null;
-                        await this.loadCases();
-                    } else {
-                        this.showToast('Failed to update case', 'error');
-                    }
-                } catch (error) {
-                    console.error('Error:', error);
-                    this.showToast('Error saving changes', 'error');
-                }
+                this.showToast('Edit mode coming soon', 'error');
             },
 
             updateDashboard() {
