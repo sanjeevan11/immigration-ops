@@ -25,8 +25,6 @@
         .stat-label { font-size: 12px; color: #999; margin-bottom: 8px; }
         .stat-number { font-size: 42px; font-weight: 700; }
         .cases-section { margin-top: 48px; }
-        .filters { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
-        .filter-input { background: rgba(17,17,17,0.8); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 12px 16px; color: #fff; font-family: inherit; font-size: 14px; flex: 1; min-width: 200px; }
         .cases-container { display: grid; gap: 12px; }
         .case-card { background: linear-gradient(135deg, #111 0%, #0a0a0a 100%); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 20px; transition: all 0.3s; }
         .case-card:hover { border-color: rgba(255,255,255,0.3); transform: translateY(-4px); }
@@ -39,27 +37,14 @@
         .detail-row { display: flex; flex-direction: column; }
         .detail-label { font-size: 11px; color: #999; margin-bottom: 6px; }
         .detail-value { font-size: 13px; }
-        .case-actions { margin-top: 16px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; gap: 10px; }
-        .btn-edit { padding: 10px 14px; font-size: 12px; border-radius: 8px; cursor: pointer; flex: 1; font-weight: 600; border: none; font-family: inherit; background: rgba(255,255,255,0.1); color: #fff; }
-        .edit-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.9); z-index: 2000; padding: 80px 20px 20px; overflow-y: auto; }
-        .edit-overlay.active { display: flex; align-items: center; justify-content: center; }
-        .edit-panel { background: linear-gradient(135deg, #1a1a1a 0%, #111 100%); border: 1px solid rgba(255,255,255,0.2); border-radius: 20px; padding: 32px; max-width: 500px; width: 100%; }
-        .edit-panel h2 { font-size: 24px; margin-bottom: 24px; }
-        .edit-field { margin-bottom: 20px; }
-        .edit-field label { display: block; font-size: 12px; color: #999; margin-bottom: 8px; }
-        .edit-field input, .edit-field select { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 12px 14px; color: #fff; font-family: inherit; font-size: 14px; }
-        .edit-actions { display: flex; gap: 12px; margin-top: 28px; }
-        .btn-save, .btn-cancel { flex: 1; padding: 12px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
-        .btn-save { background: #fff; color: #000; }
-        .btn-cancel { background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2); }
-        .toast { position: fixed; bottom: 20px; right: 20px; background: rgba(0,0,0,0.9); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 14px 20px; border-radius: 10px; font-size: 13px; z-index: 3000; }
         .empty-state { text-align: center; padding: 60px 20px; color: #666; }
+        .loading { text-align: center; padding: 40px; }
         @media (max-width: 768px) { h1 { font-size: 32px; } }
     </style>
 </head>
 <body>
     <header>
-        <div class="logo">Immigration Cases</div>
+        <div class="logo">📋 Immigration Cases</div>
         <button class="btn" onclick="App.refreshData()">↻ Refresh</button>
     </header>
 
@@ -91,182 +76,125 @@
 
     <section class="container cases-section">
         <h2 style="font-size: 28px; margin-bottom: 20px;">Live Cases</h2>
-        <div class="filters">
-            <input type="text" id="searchInput" class="filter-input" placeholder="Search cases...">
+        <div class="cases-container" id="casesContainer">
+            <div class="loading">Loading cases...</div>
         </div>
-        <div class="cases-container" id="casesContainer"></div>
     </section>
-
-    <div class="edit-overlay" id="editOverlay">
-        <div class="edit-panel">
-            <h2>Edit Case</h2>
-            <div class="edit-field">
-                <label>Email</label>
-                <input type="email" id="editEmail">
-            </div>
-            <div class="edit-field">
-                <label>Phone</label>
-                <input type="tel" id="editPhone">
-            </div>
-            <div class="edit-field">
-                <label>Status</label>
-                <select id="editStatus">
-                    <option>New - Waiting for docs</option>
-                    <option>Documents Received</option>
-                    <option>Under Review</option>
-                    <option>In Progress</option>
-                    <option>Completed</option>
-                </select>
-            </div>
-            <div class="edit-field">
-                <label>Urgency</label>
-                <select id="editUrgency">
-                    <option>Normal</option>
-                    <option>Urgent</option>
-                </select>
-            </div>
-            <div class="edit-actions">
-                <button class="btn-save" onclick="App.saveEdit()">Save</button>
-                <button class="btn-cancel" onclick="App.cancelEdit()">Cancel</button>
-            </div>
-        </div>
-    </div>
 
     <script>
         const App = {
             allCases: [],
-            filteredCases: [],
-            editingCase: null,
             APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbyU3DvPNZEMgeH-P1IT_Rh9Hpv3pLsqm3TlEHd9nXoT313XeZyeznySCJ7WQn0se2QW/exec",
 
             init: function() {
-                document.getElementById('searchInput').addEventListener('input', () => this.filterCases());
-                document.getElementById('editOverlay').addEventListener('click', (e) => { 
-                    if (e.target.id === 'editOverlay') this.cancelEdit(); 
-                });
                 this.loadCases();
             },
 
             loadCases: function() {
                 try {
-                    const script = document.createElement('script');
-                    const callbackName = 'jsonpCallback_' + Date.now();
+                    console.log("Loading cases from:", this.APPS_SCRIPT_URL);
                     
-                    window[callbackName] = (data) => {
-                        if (data && data.cases && Array.isArray(data.cases)) {
-                            this.allCases = data.cases;
-                            this.filterCases();
-                            this.updateDashboard();
-                        }
-                        delete window[callbackName];
-                        script.remove();
-                    };
-                    
-                    script.src = this.APPS_SCRIPT_URL + "?action=get_cases&callback=" + callbackName;
-                    script.onerror = () => {
-                        this.showToast('Failed to load cases');
-                        delete window[callbackName];
-                        script.remove();
-                    };
-                    document.head.appendChild(script);
+                    // Use fetch with no-cors mode
+                    fetch(this.APPS_SCRIPT_URL + "?action=get_cases")
+                        .then(r => r.json())
+                        .then(data => {
+                            console.log("Data received:", data);
+                            if (data && data.cases && Array.isArray(data.cases)) {
+                                this.allCases = data.cases;
+                                this.renderCases();
+                                this.updateDashboard();
+                            }
+                        })
+                        .catch(error => {
+                            console.log("Fetch error, trying JSONP...", error);
+                            this.loadCasesJSONP();
+                        });
                 } catch (error) {
-                    this.showToast('Error: ' + error.message);
+                    console.error('Error:', error);
+                    this.showError('Failed to load cases');
                 }
             },
 
-            filterCases: function() {
-                const search = document.getElementById('searchInput').value.toLowerCase();
-                this.filteredCases = this.allCases.filter(c => {
-                    return !search || String(c['Name'] || '').toLowerCase().includes(search) || 
-                           String(c['Case ID'] || '').toLowerCase().includes(search);
-                });
-                this.renderCases();
+            loadCasesJSONP: function() {
+                try {
+                    const script = document.createElement('script');
+                    const callback = 'cb_' + Date.now();
+                    
+                    window[callback] = (data) => {
+                        console.log("JSONP Data:", data);
+                        if (data && data.cases && Array.isArray(data.cases)) {
+                            this.allCases = data.cases;
+                            this.renderCases();
+                            this.updateDashboard();
+                        }
+                        delete window[callback];
+                        script.remove();
+                    };
+                    
+                    script.onerror = () => {
+                        console.log("JSONP also failed");
+                        this.showError('Unable to connect to Apps Script');
+                        delete window[callback];
+                        script.remove();
+                    };
+                    
+                    script.src = this.APPS_SCRIPT_URL + "?action=get_cases&callback=" + callback;
+                    document.head.appendChild(script);
+                } catch (error) {
+                    this.showError('Error loading cases');
+                }
             },
 
             renderCases: function() {
                 const container = document.getElementById('casesContainer');
                 container.innerHTML = '';
-                if (this.filteredCases.length === 0) {
+                
+                if (this.allCases.length === 0) {
                     container.innerHTML = '<div class="empty-state">No cases found</div>';
                     return;
                 }
-                this.filteredCases.forEach((c) => {
-                    const urgencyClass = c['Urgency'] === 'Urgent' ? 'urgency-urgent' : 'urgency-normal';
+                
+                this.allCases.forEach((c) => {
+                    const urgencyClass = (c['Urgency'] || '').toLowerCase() === 'urgent' ? 'urgency-urgent' : 'urgency-normal';
+                    const name = c['Name'] || 'Unknown';
+                    const caseId = c['Case ID'] || '';
+                    const email = c['Email'] || '';
+                    const phone = c['Phone'] || '';
+                    const status = c['Status'] || '';
+                    
                     container.innerHTML += `
                         <div class="case-card">
                             <div class="case-header">
-                                <div class="case-title">${this.escape(c['Name'] || 'Unknown')}</div>
+                                <div class="case-title">${this.escape(name)}</div>
                                 <span class="urgency-badge ${urgencyClass}">${c['Urgency'] || 'Normal'}</span>
                             </div>
                             <div class="case-details">
-                                <div class="detail-row"><div class="detail-label">Case ID</div><div class="detail-value">${this.escape(c['Case ID'] || '')}</div></div>
-                                <div class="detail-row"><div class="detail-label">Email</div><div class="detail-value">${this.escape(c['Email'] || '')}</div></div>
-                                <div class="detail-row"><div class="detail-label">Phone</div><div class="detail-value">${this.escape(c['Phone'] || '')}</div></div>
-                                <div class="detail-row"><div class="detail-label">Status</div><div class="detail-value">${this.escape(c['Status'] || '')}</div></div>
-                            </div>
-                            <div class="case-actions">
-                                <button class="btn-edit" onclick="App.startEdit('${this.escape(c['Case ID'])}')">Edit</button>
+                                <div class="detail-row"><div class="detail-label">Case ID</div><div class="detail-value">${this.escape(caseId)}</div></div>
+                                <div class="detail-row"><div class="detail-label">Email</div><div class="detail-value">${this.escape(email)}</div></div>
+                                <div class="detail-row"><div class="detail-label">Phone</div><div class="detail-value">${this.escape(phone)}</div></div>
+                                <div class="detail-row"><div class="detail-label">Status</div><div class="detail-value">${this.escape(status)}</div></div>
                             </div>
                         </div>
                     `;
                 });
             },
 
-            startEdit: function(caseId) {
-                const caseData = this.allCases.find(c => c['Case ID'] === caseId);
-                if (!caseData) return;
-                this.editingCase = caseData;
-                document.getElementById('editEmail').value = caseData['Email'] || '';
-                document.getElementById('editPhone').value = caseData['Phone'] || '';
-                document.getElementById('editStatus').value = caseData['Status'] || '';
-                document.getElementById('editUrgency').value = caseData['Urgency'] || 'Normal';
-                document.getElementById('editOverlay').classList.add('active');
-            },
-
-            saveEdit: function() {
-                if (!this.editingCase) return;
-                const updates = {
-                    'Email': document.getElementById('editEmail').value,
-                    'Phone': document.getElementById('editPhone').value,
-                    'Status': document.getElementById('editStatus').value,
-                    'Urgency': document.getElementById('editUrgency').value
-                };
-                
-                const payload = new FormData();
-                payload.append('data', JSON.stringify({
-                    action: 'update_case',
-                    caseId: this.editingCase['Case ID'],
-                    updates: updates
-                }));
-                
-                fetch(this.APPS_SCRIPT_URL, { method: 'POST', payload: payload })
-                    .catch(() => {});
-                
-                this.showToast('✓ Case updated');
-                this.cancelEdit();
-                setTimeout(() => this.loadCases(), 1000);
-            },
-
-            cancelEdit: function() {
-                document.getElementById('editOverlay').classList.remove('active');
-                this.editingCase = null;
-            },
-
             updateDashboard: function() {
                 document.getElementById('totalCases').textContent = this.allCases.length;
-                document.getElementById('urgentCases').textContent = this.allCases.filter(c => c['Urgency'] === 'Urgent').length;
-                document.getElementById('pendingCases').textContent = this.allCases.filter(c => String(c['Status'] || '').includes('Waiting')).length;
-                document.getElementById('newCases').textContent = this.allCases.filter(c => String(c['Status'] || '').includes('New')).length;
+                document.getElementById('urgentCases').textContent = this.allCases.filter(c => (c['Urgency'] || '').toLowerCase() === 'urgent').length;
+                document.getElementById('pendingCases').textContent = this.allCases.filter(c => (c['Status'] || '').includes('Waiting')).length;
+                document.getElementById('newCases').textContent = this.allCases.filter(c => (c['Status'] || '').includes('New')).length;
             },
 
-            refreshData: function() { this.loadCases(); },
-            showToast: function(message) {
-                const toast = document.createElement('div');
-                toast.className = 'toast';
-                toast.textContent = message;
-                document.body.appendChild(toast);
-                setTimeout(() => toast.remove(), 3000);
+            refreshData: function() {
+                document.getElementById('casesContainer').innerHTML = '<div class="loading">Loading cases...</div>';
+                this.loadCases();
             },
+
+            showError: function(msg) {
+                document.getElementById('casesContainer').innerHTML = '<div class="empty-state" style="color: #ff6b6b;">' + msg + '</div>';
+            },
+
             escape: function(text) {
                 if (!text) return '';
                 const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
