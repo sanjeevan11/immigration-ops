@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Immigration Case Management - DEBUG</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #000; color: #fff; padding: 20px; }
+        .debug-panel { background: #1a1a1a; border: 1px solid #444; border-radius: 8px; padding: 20px; margin-bottom: 20px; }
+        .debug-title { font-size: 18px; font-weight: 600; margin-bottom: 10px; color: #64b5f6; }
+        .debug-info { font-size: 12px; color: #999; margin: 8px 0; font-family: 'Courier New', monospace; word-break: break-all; }
+        .debug-success { color: #4caf50; }
+        .debug-error { color: #ff6b6b; }
+        .btn { padding: 10px 20px; background: #333; color: #fff; border: none; border-radius: 8px; cursor: pointer; margin: 10px 0; }
+        .btn:hover { background: #444; }
+    </style>
+</head>
+<body>
+    <div class="debug-panel">
+        <div class="debug-title">🔍 Debug Panel</div>
+        <div class="debug-info">
+            <strong>Apps Script URL:</strong><br>
+            <span id="urlDisplay">Loading...</span>
+        </div>
+        <div class="debug-info">
+            <strong>Test Status:</strong><br>
+            <span id="status">Waiting for test...</span>
+        </div>
+        <button class="btn" onclick="testJsonp()">Test JSONP Connection</button>
+        <button class="btn" onclick="testDirectFetch()">Test Direct Fetch</button>
+    </div>
+
+    <script>
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/u/1/s/AKfycbwrH5IK6DVJMKr6ImlwFmXWsU2xVv6WcH4VGFb4sNaOJ9w3KpLzvk8HIJ1PGi-9DEsf/exec";
+        
+        document.getElementById('urlDisplay').textContent = APPS_SCRIPT_URL;
+
+        function testJsonp() {
+            document.getElementById('status').innerHTML = '<span class="debug-error">Testing JSONP...</span>';
+            
+            const script = document.createElement('script');
+            const callbackName = 'jsonpCallback_' + Date.now();
+            
+            window[callbackName] = (data) => {
+                document.getElementById('status').innerHTML = `
+                    <span class="debug-success">✅ JSONP SUCCESS!</span><br>
+                    Response: ${JSON.stringify(data).substring(0, 200)}...
+                `;
+                delete window[callbackName];
+                script.remove();
+            };
+            
+            script.src = APPS_SCRIPT_URL + "?action=get_cases&callback=" + callbackName;
+            script.onerror = () => {
+                document.getElementById('status').innerHTML = '<span class="debug-error">❌ JSONP FAILED - Script load error</span>';
+                delete window[callbackName];
+                script.remove();
+            };
+            
+            document.head.appendChild(script);
+        }
+
+        function testDirectFetch() {
+            document.getElementById('status').innerHTML = '<span class="debug-error">Testing Direct Fetch...</span>';
+            
+            fetch(APPS_SCRIPT_URL + "?action=get_cases")
+                .then(r => r.json())
+                .then(data => {
+                    document.getElementById('status').innerHTML = `
+                        <span class="debug-success">✅ DIRECT FETCH SUCCESS!</span><br>
+                        Response: ${JSON.stringify(data).substring(0, 200)}...
+                    `;
+                })
+                .catch(err => {
+                    document.getElementById('status').innerHTML = `
+                        <span class="debug-error">❌ DIRECT FETCH FAILED</span><br>
+                        Error: ${err.message}
+                    `;
+                });
+        }
+    </script>
+</body>
+</html>
