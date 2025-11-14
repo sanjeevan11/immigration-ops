@@ -3,82 +3,206 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Immigration Case Management - DEBUG</title>
+    <title>Immigration Case Management</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📋</text></svg>">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #000; color: #fff; padding: 20px; }
-        .debug-panel { background: #1a1a1a; border: 1px solid #444; border-radius: 8px; padding: 20px; margin-bottom: 20px; }
-        .debug-title { font-size: 18px; font-weight: 600; margin-bottom: 10px; color: #64b5f6; }
-        .debug-info { font-size: 12px; color: #999; margin: 8px 0; font-family: 'Courier New', monospace; word-break: break-all; }
-        .debug-success { color: #4caf50; }
-        .debug-error { color: #ff6b6b; }
-        .btn { padding: 10px 20px; background: #333; color: #fff; border: none; border-radius: 8px; cursor: pointer; margin: 10px 0; }
-        .btn:hover { background: #444; }
+        html, body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #000; color: #fff; line-height: 1.6; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #000; }
+        ::-webkit-scrollbar-thumb { background: #444; border-radius: 4px; }
+        header { background: rgba(0,0,0,0.95); border-bottom: 1px solid rgba(255,255,255,0.1); padding: 0 20px; height: 60px; display: flex; align-items: center; justify-content: space-between; position: fixed; top: 0; left: 0; right: 0; z-index: 100; }
+        .logo { font-size: 18px; font-weight: 600; }
+        .btn { padding: 8px 16px; border-radius: 8px; border: none; font-size: 14px; font-weight: 500; cursor: pointer; background: #333; color: #fff; font-family: inherit; }
+        body { padding-top: 60px; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 0 20px; }
+        section { padding: 40px 0; }
+        h1 { font-size: 48px; font-weight: 700; margin-bottom: 16px; }
+        .subtitle { font-size: 16px; color: #999; margin-bottom: 32px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-bottom: 48px; }
+        .stat-card { background: linear-gradient(135deg, #111 0%, #0a0a0a 100%); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 24px; transition: all 0.4s; }
+        .stat-card:hover { border-color: rgba(255,255,255,0.3); transform: translateY(-8px); }
+        .stat-label { font-size: 12px; color: #999; margin-bottom: 8px; }
+        .stat-number { font-size: 42px; font-weight: 700; }
+        .cases-section { margin-top: 48px; }
+        .cases-container { display: grid; gap: 12px; }
+        .case-card { background: linear-gradient(135deg, #111 0%, #0a0a0a 100%); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 20px; transition: all 0.3s; }
+        .case-card:hover { border-color: rgba(255,255,255,0.3); transform: translateY(-4px); }
+        .case-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .case-title { font-size: 18px; font-weight: 600; }
+        .urgency-badge { padding: 6px 12px; border-radius: 10px; font-size: 11px; font-weight: 600; }
+        .urgency-normal { background: rgba(100,181,246,0.2); color: #64b5f6; }
+        .urgency-urgent { background: rgba(255,107,107,0.2); color: #ff6b6b; }
+        .case-details { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+        .detail-row { display: flex; flex-direction: column; }
+        .detail-label { font-size: 11px; color: #999; margin-bottom: 6px; }
+        .detail-value { font-size: 13px; }
+        .empty-state { text-align: center; padding: 60px 20px; color: #666; }
+        .loading { text-align: center; padding: 40px; }
+        @media (max-width: 768px) { h1 { font-size: 32px; } }
     </style>
 </head>
 <body>
-    <div class="debug-panel">
-        <div class="debug-title">🔍 Debug Panel</div>
-        <div class="debug-info">
-            <strong>Apps Script URL:</strong><br>
-            <span id="urlDisplay">Loading...</span>
+    <header>
+        <div class="logo">📋 Immigration Cases</div>
+        <button class="btn" onclick="App.refreshData()">↻ Refresh</button>
+    </header>
+
+    <section class="container">
+        <h1>Case Management</h1>
+        <p class="subtitle">Manage all immigration cases elegantly</p>
+    </section>
+
+    <section class="container">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Total Cases</div>
+                <div class="stat-number" id="totalCases">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Urgent</div>
+                <div class="stat-number" id="urgentCases" style="color: #ff6b6b;">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Pending</div>
+                <div class="stat-number" id="pendingCases">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">New</div>
+                <div class="stat-number" id="newCases">0</div>
+            </div>
         </div>
-        <div class="debug-info">
-            <strong>Test Status:</strong><br>
-            <span id="status">Waiting for test...</span>
+    </section>
+
+    <section class="container cases-section">
+        <h2 style="font-size: 28px; margin-bottom: 20px;">Live Cases</h2>
+        <div class="cases-container" id="casesContainer">
+            <div class="loading">Loading cases...</div>
         </div>
-        <button class="btn" onclick="testJsonp()">Test JSONP Connection</button>
-        <button class="btn" onclick="testDirectFetch()">Test Direct Fetch</button>
-    </div>
+    </section>
 
     <script>
-        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyU3DvPNZEMgeH-P1IT_Rh9Hpv3pLsqm3TlEHd9nXoT313XeZyeznySCJ7WQn0se2QW/exec";
-        
-        document.getElementById('urlDisplay').textContent = APPS_SCRIPT_URL;
+        const App = {
+            allCases: [],
+            APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbyU3DvPNZEMgeH-P1IT_Rh9Hpv3pLsqm3TlEHd9nXoT313XeZyeznySCJ7WQn0se2QW/exec",
 
-        function testJsonp() {
-            document.getElementById('status').innerHTML = '<span class="debug-error">Testing JSONP...</span>';
-            
-            const script = document.createElement('script');
-            const callbackName = 'jsonpCallback_' + Date.now();
-            
-            window[callbackName] = (data) => {
-                document.getElementById('status').innerHTML = `
-                    <span class="debug-success">✅ JSONP SUCCESS!</span><br>
-                    Response: ${JSON.stringify(data).substring(0, 200)}...
-                `;
-                delete window[callbackName];
-                script.remove();
-            };
-            
-            script.src = APPS_SCRIPT_URL + "?action=get_cases&callback=" + callbackName;
-            script.onerror = () => {
-                document.getElementById('status').innerHTML = '<span class="debug-error">❌ JSONP FAILED - Script load error</span>';
-                delete window[callbackName];
-                script.remove();
-            };
-            
-            document.head.appendChild(script);
-        }
+            init: function() {
+                this.loadCases();
+            },
 
-        function testDirectFetch() {
-            document.getElementById('status').innerHTML = '<span class="debug-error">Testing Direct Fetch...</span>';
-            
-            fetch(APPS_SCRIPT_URL + "?action=get_cases")
-                .then(r => r.json())
-                .then(data => {
-                    document.getElementById('status').innerHTML = `
-                        <span class="debug-success">✅ DIRECT FETCH SUCCESS!</span><br>
-                        Response: ${JSON.stringify(data).substring(0, 200)}...
-                    `;
-                })
-                .catch(err => {
-                    document.getElementById('status').innerHTML = `
-                        <span class="debug-error">❌ DIRECT FETCH FAILED</span><br>
-                        Error: ${err.message}
+            loadCases: function() {
+                try {
+                    console.log("Loading cases from:", this.APPS_SCRIPT_URL);
+                    
+                    // Use fetch with no-cors mode
+                    fetch(this.APPS_SCRIPT_URL + "?action=get_cases")
+                        .then(r => r.json())
+                        .then(data => {
+                            console.log("Data received:", data);
+                            if (data && data.cases && Array.isArray(data.cases)) {
+                                this.allCases = data.cases;
+                                this.renderCases();
+                                this.updateDashboard();
+                            }
+                        })
+                        .catch(error => {
+                            console.log("Fetch error, trying JSONP...", error);
+                            this.loadCasesJSONP();
+                        });
+                } catch (error) {
+                    console.error('Error:', error);
+                    this.showError('Failed to load cases');
+                }
+            },
+
+            loadCasesJSONP: function() {
+                try {
+                    const script = document.createElement('script');
+                    const callback = 'cb_' + Date.now();
+                    
+                    window[callback] = (data) => {
+                        console.log("JSONP Data:", data);
+                        if (data && data.cases && Array.isArray(data.cases)) {
+                            this.allCases = data.cases;
+                            this.renderCases();
+                            this.updateDashboard();
+                        }
+                        delete window[callback];
+                        script.remove();
+                    };
+                    
+                    script.onerror = () => {
+                        console.log("JSONP also failed");
+                        this.showError('Unable to connect to Apps Script');
+                        delete window[callback];
+                        script.remove();
+                    };
+                    
+                    script.src = this.APPS_SCRIPT_URL + "?action=get_cases&callback=" + callback;
+                    document.head.appendChild(script);
+                } catch (error) {
+                    this.showError('Error loading cases');
+                }
+            },
+
+            renderCases: function() {
+                const container = document.getElementById('casesContainer');
+                container.innerHTML = '';
+                
+                if (this.allCases.length === 0) {
+                    container.innerHTML = '<div class="empty-state">No cases found</div>';
+                    return;
+                }
+                
+                this.allCases.forEach((c) => {
+                    const urgencyClass = (c['Urgency'] || '').toLowerCase() === 'urgent' ? 'urgency-urgent' : 'urgency-normal';
+                    const name = c['Name'] || 'Unknown';
+                    const caseId = c['Case ID'] || '';
+                    const email = c['Email'] || '';
+                    const phone = c['Phone'] || '';
+                    const status = c['Status'] || '';
+                    
+                    container.innerHTML += `
+                        <div class="case-card">
+                            <div class="case-header">
+                                <div class="case-title">${this.escape(name)}</div>
+                                <span class="urgency-badge ${urgencyClass}">${c['Urgency'] || 'Normal'}</span>
+                            </div>
+                            <div class="case-details">
+                                <div class="detail-row"><div class="detail-label">Case ID</div><div class="detail-value">${this.escape(caseId)}</div></div>
+                                <div class="detail-row"><div class="detail-label">Email</div><div class="detail-value">${this.escape(email)}</div></div>
+                                <div class="detail-row"><div class="detail-label">Phone</div><div class="detail-value">${this.escape(phone)}</div></div>
+                                <div class="detail-row"><div class="detail-label">Status</div><div class="detail-value">${this.escape(status)}</div></div>
+                            </div>
+                        </div>
                     `;
                 });
-        }
+            },
+
+            updateDashboard: function() {
+                document.getElementById('totalCases').textContent = this.allCases.length;
+                document.getElementById('urgentCases').textContent = this.allCases.filter(c => (c['Urgency'] || '').toLowerCase() === 'urgent').length;
+                document.getElementById('pendingCases').textContent = this.allCases.filter(c => (c['Status'] || '').includes('Waiting')).length;
+                document.getElementById('newCases').textContent = this.allCases.filter(c => (c['Status'] || '').includes('New')).length;
+            },
+
+            refreshData: function() {
+                document.getElementById('casesContainer').innerHTML = '<div class="loading">Loading cases...</div>';
+                this.loadCases();
+            },
+
+            showError: function(msg) {
+                document.getElementById('casesContainer').innerHTML = '<div class="empty-state" style="color: #ff6b6b;">' + msg + '</div>';
+            },
+
+            escape: function(text) {
+                if (!text) return '';
+                const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+                return String(text).replace(/[&<>"']/g, m => map[m]);
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => App.init());
     </script>
 </body>
 </html>
