@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Immigration Solicitor Dashboard</title>
+    <title>UK Immigration Case Dashboard</title>
     <style>
         :root {
             --color-white: rgba(255, 255, 255, 1);
@@ -18,8 +18,6 @@
             --color-red-400: rgba(255, 84, 89, 1);
             --color-red-500: rgba(192, 21, 47, 1);
             --color-orange-500: rgba(168, 75, 47, 1);
-            --color-charcoal-700: rgba(31, 33, 33, 1);
-            --color-charcoal-800: rgba(38, 40, 40, 1);
 
             --color-background: var(--color-cream-50);
             --color-surface: var(--color-cream-100);
@@ -32,47 +30,11 @@
             --color-success: var(--color-teal-500);
 
             --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            --font-size-sm: 12px;
-            --font-size-base: 14px;
-            --font-size-lg: 16px;
-            --font-size-xl: 20px;
-            --font-size-2xl: 24px;
-            --font-size-4xl: 36px;
-
-            --space-4: 4px;
-            --space-8: 8px;
-            --space-12: 12px;
-            --space-16: 16px;
-            --space-20: 20px;
-            --space-24: 24px;
-            --space-32: 32px;
-
-            --radius-sm: 6px;
-            --radius-base: 8px;
-            --radius-lg: 12px;
-
-            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
-            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.06);
         }
 
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --color-background: var(--color-charcoal-700);
-                --color-surface: var(--color-charcoal-800);
-                --color-text: var(--color-gray-200);
-                --color-text-secondary: var(--color-gray-300);
-            }
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         html, body {
             font-family: var(--font-family);
-            font-size: var(--font-size-base);
             background-color: var(--color-background);
             color: var(--color-text);
             line-height: 1.5;
@@ -81,11 +43,8 @@
         header {
             background-color: var(--color-surface);
             border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-            padding: var(--space-16) var(--space-24);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: var(--shadow-sm);
+            padding: 16px 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
         }
 
         .header-content {
@@ -97,30 +56,86 @@
         }
 
         h1 {
-            font-size: var(--font-size-2xl);
+            font-size: 24px;
             color: var(--color-primary);
         }
 
-        .header-controls {
-            display: flex;
-            gap: var(--space-16);
+        .btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            background: rgba(0, 0, 0, 0.1);
+            color: var(--color-text);
+            transition: all 0.3s;
+        }
+
+        .btn:hover { background: rgba(0, 0, 0, 0.15); }
+
+        .container { max-width: 1400px; margin: 0 auto; padding: 24px; }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .card {
+            background: var(--color-surface);
+            border-radius: 12px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+            transition: all 0.3s;
+        }
+
+        .card:hover {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.06);
+            transform: translateY(-2px);
+        }
+
+        .card h3 {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: var(--color-text-secondary);
+            margin-bottom: 12px;
+        }
+
+        .card-number {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--color-primary);
+        }
+
+        .card-number--urgent { color: var(--color-red-400); }
+
+        .setup-notice {
+            background: var(--color-warning);
+            color: white;
+            padding: 16px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 24px;
         }
 
         .nav-tabs {
             display: flex;
-            gap: var(--space-16);
+            gap: 16px;
             border-bottom: 2px solid rgba(0, 0, 0, 0.1);
-            padding: 0 var(--space-24);
+            padding: 0 24px;
             background-color: var(--color-surface);
         }
 
         .nav-tab {
-            padding: var(--space-12) var(--space-16);
+            padding: 12px 16px;
             background: none;
             border: none;
             border-bottom: 2px solid transparent;
             cursor: pointer;
-            font-size: var(--font-size-base);
+            font-size: 14px;
             color: var(--color-text-secondary);
             transition: all 0.3s;
         }
@@ -130,121 +145,27 @@
             border-bottom-color: var(--color-primary);
         }
 
-        .nav-tab:hover {
-            color: var(--color-text);
-        }
+        .nav-tab:hover { color: var(--color-text); }
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: var(--space-24);
-        }
-
-        .section {
-            display: none;
-        }
-
-        .section.active {
-            display: block;
-        }
-
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: var(--space-16);
-            margin-bottom: var(--space-32);
-        }
-
-        .card {
-            background: var(--color-surface);
-            border-radius: var(--radius-lg);
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            padding: var(--space-20);
-            box-shadow: var(--shadow-sm);
-            transition: all 0.3s;
-        }
-
-        .card:hover {
-            box-shadow: var(--shadow-md);
-            transform: translateY(-2px);
-        }
-
-        .card h3 {
-            font-size: var(--font-size-sm);
-            text-transform: uppercase;
-            color: var(--color-text-secondary);
-            margin-bottom: var(--space-12);
-        }
-
-        .card-number {
-            font-size: var(--font-size-4xl);
-            font-weight: 700;
-            color: var(--color-primary);
-        }
-
-        .card-number--urgent {
-            color: var(--color-red-400);
-        }
-
-        .card-number--success {
-            color: var(--color-success);
-        }
-
-        .setup-notice {
-            background: var(--color-warning);
-            color: white;
-            padding: var(--space-16);
-            border-radius: var(--radius-base);
-            text-align: center;
-            margin-bottom: var(--space-24);
-        }
-
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            padding: var(--space-8) var(--space-16);
-            border-radius: var(--radius-base);
-            font-size: var(--font-size-base);
-            font-weight: 500;
-            cursor: pointer;
-            border: none;
-            transition: all 0.3s;
-        }
-
-        .btn--primary {
-            background: var(--color-primary);
-            color: white;
-        }
-
-        .btn--primary:hover {
-            background: var(--color-primary-hover);
-        }
-
-        .btn--secondary {
-            background: rgba(0, 0, 0, 0.1);
-            color: var(--color-text);
-        }
-
-        .btn--secondary:hover {
-            background: rgba(0, 0, 0, 0.15);
-        }
+        .section { display: none; }
+        .section.active { display: block; }
 
         .filters {
             background: var(--color-surface);
-            border-radius: var(--radius-lg);
+            border-radius: 12px;
             border: 1px solid rgba(0, 0, 0, 0.1);
-            padding: var(--space-20);
-            margin-bottom: var(--space-24);
+            padding: 20px;
+            margin-bottom: 24px;
             display: flex;
-            gap: var(--space-16);
+            gap: 16px;
             flex-wrap: wrap;
         }
 
         .filter-input, .filter-select {
-            padding: var(--space-8) var(--space-12);
+            padding: 8px 12px;
             border: 1px solid rgba(0, 0, 0, 0.2);
-            border-radius: var(--radius-sm);
-            font-size: var(--font-size-base);
+            border-radius: 6px;
+            font-size: 14px;
             font-family: inherit;
             background: var(--color-background);
             color: var(--color-text);
@@ -252,16 +173,12 @@
             min-width: 150px;
         }
 
-        .filter-input::placeholder {
-            color: var(--color-text-secondary);
-        }
-
         .table-wrapper {
             background: var(--color-surface);
-            border-radius: var(--radius-lg);
+            border-radius: 12px;
             border: 1px solid rgba(0, 0, 0, 0.1);
             overflow-x: auto;
-            margin-bottom: var(--space-24);
+            margin-bottom: 24px;
         }
 
         table {
@@ -270,101 +187,74 @@
         }
 
         th {
-            padding: var(--space-12);
+            padding: 12px;
             text-align: left;
             font-weight: 600;
             background: rgba(0, 0, 0, 0.05);
             border-bottom: 2px solid rgba(0, 0, 0, 0.1);
             cursor: pointer;
-            user-select: none;
-        }
-
-        th:hover {
-            background: rgba(0, 0, 0, 0.08);
         }
 
         td {
-            padding: var(--space-12);
+            padding: 12px;
             border-bottom: 1px solid rgba(0, 0, 0, 0.05);
         }
 
-        tr:hover {
-            background: rgba(0, 0, 0, 0.02);
-        }
+        tr:hover { background: rgba(0, 0, 0, 0.02); }
 
         .loading-cell {
             text-align: center;
-            padding: var(--space-32) !important;
+            padding: 32px !important;
             color: var(--color-text-secondary);
         }
 
-        .actions {
+        .case-item {
+            background: var(--color-surface);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .case-header {
             display: flex;
-            gap: var(--space-8);
-            flex-wrap: wrap;
-        }
-
-        .action-btn {
-            padding: var(--space-4) var(--space-12);
-            font-size: var(--font-size-sm);
-            background: var(--color-primary);
-            color: white;
-            border: none;
-            border-radius: var(--radius-sm);
-            cursor: pointer;
-            transition: all 0.3s;
-            text-decoration: none;
-        }
-
-        .action-btn:hover {
-            background: var(--color-primary-hover);
-        }
-
-        .action-btn.secondary {
-            background: rgba(0, 0, 0, 0.1);
-            color: var(--color-text);
-        }
-
-        .pagination {
-            display: flex;
-            justify-content: center;
-            gap: var(--space-12);
+            justify-content: space-between;
             align-items: center;
-            padding: var(--space-20);
-            flex-wrap: wrap;
+            margin-bottom: 12px;
         }
 
-        .pagination-btn {
-            padding: var(--space-8) var(--space-16);
-            background: var(--color-primary);
-            color: white;
-            border: none;
-            border-radius: var(--radius-sm);
-            cursor: pointer;
-            transition: all 0.3s;
+        .case-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--color-primary);
         }
 
-        .pagination-btn:hover:not(:disabled) {
-            background: var(--color-primary-hover);
+        .urgency-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            background: rgba(33, 128, 141, 0.1);
+            color: var(--color-primary);
         }
 
-        .pagination-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
+        .urgency-badge.urgent {
+            background: rgba(255, 84, 89, 0.1);
+            color: var(--color-red-400);
         }
 
-        .spinner {
-            border: 4px solid rgba(0, 0, 0, 0.1);
-            border-top-color: var(--color-primary);
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto var(--space-12);
+        .case-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
         }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        .case-detail {
+            font-size: 14px;
+        }
+
+        .case-detail strong {
+            color: var(--color-text);
         }
 
         .toast {
@@ -373,16 +263,13 @@
             right: 20px;
             background: var(--color-success);
             color: white;
-            padding: var(--space-16) var(--space-20);
-            border-radius: var(--radius-base);
-            box-shadow: var(--shadow-md);
+            padding: 16px 20px;
+            border-radius: 8px;
             z-index: 2000;
             animation: slideIn 0.3s ease;
         }
 
-        .toast.error {
-            background: var(--color-error);
-        }
+        .toast.error { background: var(--color-error); }
 
         @keyframes slideIn {
             from { transform: translateX(400px); opacity: 0; }
@@ -393,53 +280,24 @@
             .header-content {
                 flex-direction: column;
                 align-items: flex-start;
-                gap: var(--space-12);
             }
-
-            .dashboard-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .filters {
-                flex-direction: column;
-            }
-
-            .filter-input, .filter-select {
-                width: 100%;
-                min-width: auto;
-            }
-
-            table {
-                font-size: var(--font-size-sm);
-            }
-
-            th, td {
-                padding: var(--space-8);
-            }
-
-            .actions {
-                flex-direction: column;
-            }
-
-            .action-btn {
-                width: 100%;
-            }
+            .dashboard-grid { grid-template-columns: 1fr; }
+            .filters { flex-direction: column; }
+            .filter-input, .filter-select { width: 100%; }
         }
     </style>
 </head>
 <body>
     <header>
         <div class="header-content">
-            <h1>🏛️ Immigration Solicitor Dashboard</h1>
-            <div class="header-controls">
-                <button class="btn btn--secondary" onclick="DashboardApp.refreshData()">🔄 Refresh</button>
-            </div>
+            <h1>🏛️ UK Immigration Case Dashboard</h1>
+            <button class="btn" onclick="App.refreshData()">🔄 Refresh</button>
         </div>
     </header>
 
     <nav class="nav-tabs">
         <button class="nav-tab active" data-tab="dashboard">📊 Dashboard</button>
-        <button class="nav-tab" data-tab="cases">📋 Cases</button>
+        <button class="nav-tab" data-tab="cases">📋 Live Cases</button>
     </nav>
 
     <div class="container">
@@ -454,168 +312,117 @@
                     <div class="card-number card-number--urgent" id="urgentCases">0</div>
                 </div>
                 <div class="card">
-                    <h3>Pending Docs</h3>
+                    <h3>Pending</h3>
                     <div class="card-number" id="pendingCases">0</div>
                 </div>
                 <div class="card">
-                    <h3>Completed</h3>
-                    <div class="card-number card-number--success" id="completedCases">0</div>
+                    <h3>New</h3>
+                    <div class="card-number" id="newCases">0</div>
                 </div>
             </div>
 
             <div class="setup-notice">
-                ⚙️ <strong>Setup Required:</strong> Update APPS_SCRIPT_URL in the script section below with your Google Apps Script URL
+                ✓ Dashboard connected to your Google Sheet. Data will appear below.
             </div>
         </section>
 
         <section id="cases" class="section">
             <div class="filters">
                 <input type="text" id="searchInput" class="filter-input" placeholder="Search by Case ID, Name, Email...">
-                <select id="statusFilter" class="filter-select">
-                    <option value="">All Status</option>
-                    <option>New - Waiting for docs</option>
-                    <option>Waiting for Documents</option>
-                    <option>Documents Received</option>
-                    <option>Under Review</option>
-                    <option>In Progress</option>
-                    <option>Awaiting Decision</option>
-                    <option>Approved</option>
-                    <option>Rejected</option>
-                    <option>Completed</option>
-                </select>
                 <select id="urgencyFilter" class="filter-select">
                     <option value="">All Urgency</option>
-                    <option>Normal</option>
-                    <option>Urgent</option>
+                    <option value="Urgent">Urgent</option>
+                    <option value="Normal">Normal</option>
                 </select>
+                <button class="btn" onclick="App.refreshData()" style="width: auto;">🔄 Refresh Now</button>
             </div>
 
-            <div class="table-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th data-sort="Case ID">Case ID</th>
-                            <th data-sort="Name">Name</th>
-                            <th>Email</th>
-                            <th>Visa Route</th>
-                            <th>Status</th>
-                            <th>Urgency</th>
-                            <th>Docs</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="casesTableBody">
-                        <tr>
-                            <td colspan="8" class="loading-cell">
-                                <div class="spinner"></div>
-                                <p>Loading cases...</p>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="pagination">
-                <button id="prevBtn" class="pagination-btn">← Previous</button>
-                <span id="pageInfo">Page 1</span>
-                <button id="nextBtn" class="pagination-btn">Next →</button>
-                <select id="pageSize" class="filter-select">
-                    <option value="10">10 per page</option>
-                    <option value="25" selected>25 per page</option>
-                    <option value="50">50 per page</option>
-                    <option value="100">100 per page</option>
-                </select>
-            </div>
+            <div id="casesContainer"></div>
         </section>
     </div>
 
     <div id="toastContainer"></div>
 
     <script>
-        // ===== CONFIGURATION - UPDATE THIS URL =====
+        // ===== PASTE YOUR APPS SCRIPT URL HERE =====
         const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzc8udblouZ2GOkaimcGeQrvtkbQ447lvSoiRNvLCsT4rsD-grTcaR56pIFrB6ZrPoj/exec";
 
-        const API = {
-            async getCases() {
-                try {
-                    const response = await fetch(`${APPS_SCRIPT_URL}?action=get_cases`);
-                    if (!response.ok) throw new Error('Network response was not ok');
-                    return await response.json();
-                } catch (error) {
-                    console.error('Error fetching cases:', error);
-                    throw error;
-                }
-            },
-
-            async updateCaseField(caseId, field, value) {
-                try {
-                    const response = await fetch(APPS_SCRIPT_URL, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ action: 'update', caseId, field, value })
-                    });
-                    if (!response.ok) throw new Error('Network response was not ok');
-                    return await response.json();
-                } catch (error) {
-                    console.error('Error updating case:', error);
-                    throw error;
-                }
-            },
-
-            async sendReminder(caseId, email, clientName) {
-                try {
-                    const response = await fetch(APPS_SCRIPT_URL, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ action: 'send_reminder', caseId, email, clientName })
-                    });
-                    if (!response.ok) throw new Error('Network response was not ok');
-                    return await response.json();
-                } catch (error) {
-                    console.error('Error sending reminder:', error);
-                    throw error;
-                }
-            },
-
-            isConfigured() {
-                return !APPS_SCRIPT_URL.includes('YOUR_SCRIPT_ID');
-            }
+        // ===== COLUMN MAPPING - Maps Sheet columns to our expected fields =====
+        const COLUMN_MAPPING = {
+            'Case ID': 'Case ID',
+            'Date Submitted': 'Date Submitted',
+            'Name': 'Name',
+            'Email': 'Email',
+            'Phone': 'Phone',
+            'Urgency': 'Urgency',
+            'Visa Route': 'Visa Route',
+            'Evidence Check Notes': 'Notes',
+            'Docs Received': 'Docs Received',
+            'Intake Form Link': 'Intake Form Link',
+            'Upload Documents Link': 'Upload Documents Link',
+            'Drive Folder Link': 'Drive Folder Link',
+            'Status': 'Status',
+            'Last Updated': 'Last Updated'
         };
 
-        const Dashboard = {
+        const App = {
             allCases: [],
             filteredCases: [],
-            currentPage: 1,
-            pageSize: 25,
-            sortColumn: 'Case ID',
-            sortAscending: true,
 
             async init() {
-                if (API.isConfigured()) {
-                    await this.loadCases();
-                    setInterval(() => this.loadCases(), 30000);
-                }
                 this.setupEventListeners();
+                await this.loadCases();
+                setInterval(() => this.loadCases(), 60000); // Auto-refresh every 60 seconds
+            },
+
+            setupEventListeners() {
+                document.querySelectorAll('.nav-tab').forEach(tab => {
+                    tab.addEventListener('click', (e) => this.switchTab(e.target.dataset.tab));
+                });
+
+                const searchInput = document.getElementById('searchInput');
+                if (searchInput) {
+                    searchInput.addEventListener('input', () => this.filterCases());
+                }
+
+                const urgencyFilter = document.getElementById('urgencyFilter');
+                if (urgencyFilter) {
+                    urgencyFilter.addEventListener('change', () => this.filterCases());
+                }
             },
 
             async loadCases() {
                 try {
-                    const data = await API.getCases();
+                    const response = await fetch(`${APPS_SCRIPT_URL}?action=get_cases`);
+                    if (!response.ok) throw new Error('Failed to load cases');
+                    
+                    const data = await response.json();
+                    
                     if (data.cases && Array.isArray(data.cases)) {
-                        this.allCases = data.cases;
-                        this.applyFilters();
-                        this.updateStats();
+                        // Map the data from Sheet column names to our field names
+                        this.allCases = data.cases.map(rawCase => {
+                            const mappedCase = {};
+                            for (let [sheetCol, fieldName] of Object.entries(COLUMN_MAPPING)) {
+                                mappedCase[fieldName] = rawCase[sheetCol] || '';
+                            }
+                            return mappedCase;
+                        });
+
+                        this.filterCases();
+                        this.updateDashboard();
+                        console.log('✓ Cases loaded successfully:', this.allCases.length);
                     } else {
-                        Utils.showToast('Error loading cases', 'error');
+                        console.error('Invalid data format from Apps Script');
+                        this.showToast('Error: Invalid data format from Google Sheet', 'error');
                     }
                 } catch (error) {
-                    Utils.showToast('Failed to load cases', 'error');
+                    console.error('Error loading cases:', error);
+                    this.showToast('Failed to connect to Google Sheet', 'error');
                 }
             },
 
-            applyFilters() {
+            filterCases() {
                 const search = (document.getElementById('searchInput')?.value || '').toLowerCase();
-                const statusFilter = document.getElementById('statusFilter')?.value || '';
                 const urgencyFilter = document.getElementById('urgencyFilter')?.value || '';
 
                 this.filteredCases = this.allCases.filter(c => {
@@ -624,203 +431,76 @@
                         (c['Name'] && c['Name'].toLowerCase().includes(search)) ||
                         (c['Email'] && c['Email'].toLowerCase().includes(search));
                     
-                    const matchesStatus = !statusFilter || c['Status'] === statusFilter;
                     const matchesUrgency = !urgencyFilter || c['Urgency'] === urgencyFilter;
 
-                    return matchesSearch && matchesStatus && matchesUrgency;
+                    return matchesSearch && matchesUrgency;
                 });
 
-                this.currentPage = 1;
-                this.renderTable();
+                this.renderCases();
             },
 
-            sortTable(column) {
-                if (this.sortColumn === column) {
-                    this.sortAscending = !this.sortAscending;
-                } else {
-                    this.sortColumn = column;
-                    this.sortAscending = true;
-                }
+            renderCases() {
+                const container = document.getElementById('casesContainer');
+                container.innerHTML = '';
 
-                this.filteredCases.sort((a, b) => {
-                    const aVal = a[column] || '';
-                    const bVal = b[column] || '';
-                    const comparison = aVal < bVal ? -1 : aVal > bVal ? 1 : 0;
-                    return this.sortAscending ? comparison : -comparison;
-                });
-
-                this.renderTable();
-            },
-
-            renderTable() {
-                const start = (this.currentPage - 1) * this.pageSize;
-                const end = start + this.pageSize;
-                const pageData = this.filteredCases.slice(start, end);
-
-                const tbody = document.getElementById('casesTableBody');
-                tbody.innerHTML = '';
-
-                if (pageData.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="8" class="loading-cell">No cases found</td></tr>';
-                    this.updatePagination();
+                if (this.filteredCases.length === 0) {
+                    container.innerHTML = '<p style="text-align: center; padding: 40px; color: var(--color-text-secondary);">No cases found</p>';
                     return;
                 }
 
-                pageData.forEach((caseData) => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td><strong>${Utils.escape(caseData['Case ID'])}</strong></td>
-                        <td>${Utils.escape(caseData['Name'])}</td>
-                        <td>${Utils.escape(caseData['Email'])}</td>
-                        <td>${Utils.escape(caseData['Visa Route'])}</td>
-                        <td>
-                            <select onchange="Dashboard.updateField(this, '${Utils.escape(caseData['Case ID'])}', 'Status')">
-                                <option ${caseData['Status'] === 'New - Waiting for docs' ? 'selected' : ''}>New - Waiting for docs</option>
-                                <option ${caseData['Status'] === 'Waiting for Documents' ? 'selected' : ''}>Waiting for Documents</option>
-                                <option ${caseData['Status'] === 'Documents Received' ? 'selected' : ''}>Documents Received</option>
-                                <option ${caseData['Status'] === 'In Progress' ? 'selected' : ''}>In Progress</option>
-                                <option ${caseData['Status'] === 'Completed' ? 'selected' : ''}>Completed</option>
-                            </select>
-                        </td>
-                        <td>
-                            <select onchange="Dashboard.updateField(this, '${Utils.escape(caseData['Case ID'])}', 'Urgency')">
-                                <option ${caseData['Urgency'] === 'Normal' ? 'selected' : ''}>Normal</option>
-                                <option ${caseData['Urgency'] === 'Urgent' ? 'selected' : ''}>Urgent</option>
-                            </select>
-                        </td>
-                        <td>
-                            <select onchange="Dashboard.updateField(this, '${Utils.escape(caseData['Case ID'])}', 'Docs Received')">
-                                <option ${caseData['Docs Received'] === 'No' ? 'selected' : ''}>No</option>
-                                <option ${caseData['Docs Received'] === 'Yes' ? 'selected' : ''}>Yes</option>
-                            </select>
-                        </td>
-                        <td>
-                            <div class="actions">
-                                ${caseData['Intake Form Link'] ? `<a href="${Utils.escape(caseData['Intake Form Link'])}" target="_blank" class="action-btn">📋</a>` : ''}
-                                ${caseData['Upload Documents Link'] ? `<a href="${Utils.escape(caseData['Upload Documents Link'])}" target="_blank" class="action-btn">📤</a>` : ''}
-                                ${caseData['Drive Folder Link'] ? `<a href="${Utils.escape(caseData['Drive Folder Link'])}" target="_blank" class="action-btn">📁</a>` : ''}
-                                <button class="action-btn secondary" onclick="Dashboard.sendReminder('${Utils.escape(caseData['Case ID'])}', '${Utils.escape(caseData['Email'])}')">✉️</button>
+                this.filteredCases.forEach((caseData, index) => {
+                    const urgencyClass = caseData['Urgency'] === 'Urgent' ? 'urgent' : '';
+                    const caseHtml = `
+                        <div class="case-item">
+                            <div class="case-header">
+                                <div class="case-title">${this.escape(caseData['Name'] || 'Unnamed Case')}</div>
+                                <span class="urgency-badge ${urgencyClass}">${this.escape(caseData['Urgency'] || 'Normal')}</span>
                             </div>
-                        </td>
+                            <div class="case-details">
+                                <div class="case-detail"><strong>Case ID:</strong> ${this.escape(caseData['Case ID'])}</div>
+                                <div class="case-detail"><strong>Email:</strong> ${this.escape(caseData['Email'])}</div>
+                                <div class="case-detail"><strong>Phone:</strong> ${this.escape(caseData['Phone'])}</div>
+                                <div class="case-detail"><strong>Visa Type:</strong> ${this.escape(caseData['Visa Route'])}</div>
+                                <div class="case-detail"><strong>Status:</strong> ${this.escape(caseData['Status'])}</div>
+                                <div class="case-detail"><strong>Docs Received:</strong> ${this.escape(caseData['Docs Received'])}</div>
+                                <div class="case-detail"><strong>Submitted:</strong> ${this.escape(caseData['Date Submitted'])}</div>
+                                ${caseData['Notes'] ? `<div class="case-detail"><strong>Notes:</strong> ${this.escape(caseData['Notes'])}</div>` : ''}
+                            </div>
+                        </div>
                     `;
-                    tbody.appendChild(row);
+                    container.innerHTML += caseHtml;
                 });
-
-                this.updatePagination();
             },
 
-            async updateField(element, caseId, field) {
-                const value = element.value;
-                element.disabled = true;
-
-                try {
-                    const data = await API.updateCaseField(caseId, field, value);
-                    if (data.status === 'success') {
-                        Utils.showToast('✓ Saved');
-                        await this.loadCases();
-                    } else {
-                        Utils.showToast('Error: ' + (data.message || 'Unknown'), 'error');
-                        element.disabled = false;
-                    }
-                } catch (error) {
-                    Utils.showToast('Failed: ' + error.message, 'error');
-                    element.disabled = false;
-                }
-            },
-
-            async sendReminder(caseId, email, clientName) {
-                if (!email) {
-                    Utils.showToast('No email on file', 'error');
-                    return;
-                }
-
-                if (!confirm(`Send reminder to ${email}?`)) return;
-
-                try {
-                    const data = await API.sendReminder(caseId, email, clientName || 'Client');
-                    const message = data.status === 'success' ? '✉️ Email sent' : 'Error sending';
-                    Utils.showToast(message, data.status === 'success' ? 'success' : 'error');
-                } catch (error) {
-                    Utils.showToast('Failed: ' + error.message, 'error');
-                }
-            },
-
-            updateStats() {
-                let total = 0, urgent = 0, pending = 0, completed = 0;
+            updateDashboard() {
+                let total = 0, urgent = 0, pending = 0, newCases = 0;
 
                 this.allCases.forEach(c => {
                     total++;
                     if (c['Urgency'] === 'Urgent') urgent++;
-                    if (c['Status'] === 'New - Waiting for docs' || c['Status'] === 'Waiting for Documents') pending++;
-                    if (c['Status'] === 'Completed') completed++;
+                    if (c['Status'] && c['Status'].toLowerCase().includes('waiting')) pending++;
+                    if (c['Status'] && c['Status'].toLowerCase().includes('new')) newCases++;
                 });
 
                 document.getElementById('totalCases').textContent = total;
                 document.getElementById('urgentCases').textContent = urgent;
                 document.getElementById('pendingCases').textContent = pending;
-                document.getElementById('completedCases').textContent = completed;
+                document.getElementById('newCases').textContent = newCases;
             },
 
-            nextPage() {
-                const maxPages = Math.ceil(this.filteredCases.length / this.pageSize);
-                if (this.currentPage < maxPages) {
-                    this.currentPage++;
-                    this.renderTable();
-                    window.scrollTo(0, 0);
-                }
+            switchTab(tabName) {
+                document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+                document.getElementById(tabName)?.classList.add('active');
+                
+                document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+                document.querySelector(`[data-tab="${tabName}"]`)?.classList.add('active');
             },
 
-            previousPage() {
-                if (this.currentPage > 1) {
-                    this.currentPage--;
-                    this.renderTable();
-                    window.scrollTo(0, 0);
-                }
+            refreshData() {
+                this.loadCases();
+                this.showToast('✓ Data refreshed');
             },
 
-            changePageSize() {
-                this.pageSize = parseInt(document.getElementById('pageSize').value);
-                this.currentPage = 1;
-                this.renderTable();
-            },
-
-            updatePagination() {
-                const maxPages = Math.ceil(this.filteredCases.length / this.pageSize) || 1;
-                document.getElementById('pageInfo').textContent = `Page ${this.currentPage} of ${maxPages}`;
-                document.getElementById('prevBtn').disabled = this.currentPage === 1;
-                document.getElementById('nextBtn').disabled = this.currentPage === maxPages;
-            },
-
-            setupEventListeners() {
-                document.querySelectorAll('.nav-tab').forEach(tab => {
-                    tab.addEventListener('click', (e) => DashboardApp.switchTab(e.target.dataset.tab));
-                });
-
-                const searchInput = document.getElementById('searchInput');
-                if (searchInput) searchInput.addEventListener('input', () => this.applyFilters());
-
-                const statusFilter = document.getElementById('statusFilter');
-                if (statusFilter) statusFilter.addEventListener('change', () => this.applyFilters());
-
-                const urgencyFilter = document.getElementById('urgencyFilter');
-                if (urgencyFilter) urgencyFilter.addEventListener('change', () => this.applyFilters());
-
-                const prevBtn = document.getElementById('prevBtn');
-                if (prevBtn) prevBtn.addEventListener('click', () => this.previousPage());
-
-                const nextBtn = document.getElementById('nextBtn');
-                if (nextBtn) nextBtn.addEventListener('click', () => this.nextPage());
-
-                const pageSize = document.getElementById('pageSize');
-                if (pageSize) pageSize.addEventListener('change', () => this.changePageSize());
-
-                document.querySelectorAll('th[data-sort]').forEach(th => {
-                    th.addEventListener('click', (e) => this.sortTable(e.target.dataset.sort));
-                });
-            }
-        };
-
-        const Utils = {
             showToast(message, type = 'success') {
                 const container = document.getElementById('toastContainer');
                 const toast = document.createElement('div');
@@ -837,25 +517,7 @@
             }
         };
 
-        const DashboardApp = {
-            init() {
-                Dashboard.init();
-            },
-
-            switchTab(tabName) {
-                document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-                document.getElementById(tabName)?.classList.add('active');
-                
-                document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-                document.querySelector(`[data-tab="${tabName}"]`)?.classList.add('active');
-            },
-
-            refreshData() {
-                Dashboard.loadCases();
-            }
-        };
-
-        document.addEventListener('DOMContentLoaded', () => DashboardApp.init());
+        document.addEventListener('DOMContentLoaded', () => App.init());
     </script>
 </body>
 </html>
