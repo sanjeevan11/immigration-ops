@@ -10,61 +10,47 @@
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #000; }
         ::-webkit-scrollbar-thumb { background: #444; border-radius: 4px; }
-        
         header { background: rgba(0,0,0,0.95); border-bottom: 1px solid rgba(255,255,255,0.1); padding: 0 20px; height: 60px; display: flex; align-items: center; justify-content: space-between; position: fixed; top: 0; left: 0; right: 0; z-index: 100; }
         .logo { font-size: 18px; font-weight: 600; }
         .btn { padding: 8px 16px; border-radius: 8px; border: none; font-size: 14px; font-weight: 500; cursor: pointer; background: #333; color: #fff; font-family: inherit; }
         body { padding-top: 60px; }
-        
         .container { max-width: 1400px; margin: 0 auto; padding: 0 20px; }
         section { padding: 40px 0; }
         h1 { font-size: 48px; font-weight: 700; margin-bottom: 16px; }
         .section-subtitle { font-size: 16px; color: #999; margin-bottom: 32px; }
-        
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-bottom: 48px; }
         .stat-card { background: linear-gradient(135deg, #111 0%, #0a0a0a 100%); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 24px; transition: all 0.4s; }
         .stat-card:hover { border-color: rgba(255,255,255,0.3); transform: translateY(-8px); }
         .stat-label { font-size: 12px; color: #999; margin-bottom: 8px; }
         .stat-number { font-size: 42px; font-weight: 700; }
-        
         .cases-section { margin-top: 48px; }
         .filters { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
         .filter-input, .filter-select { background: rgba(17,17,17,0.8); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 12px 16px; color: #fff; font-family: inherit; font-size: 14px; flex: 1; min-width: 200px; }
-        
         .cases-container { display: grid; gap: 12px; }
         .case-card { background: linear-gradient(135deg, #111 0%, #0a0a0a 100%); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 20px; transition: all 0.3s; }
         .case-card:hover { border-color: rgba(255,255,255,0.3); transform: translateY(-4px); }
-        
         .case-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); }
         .case-title { font-size: 18px; font-weight: 600; }
-        
         .urgency-badge { padding: 6px 12px; border-radius: 10px; font-size: 11px; font-weight: 600; }
         .urgency-normal { background: rgba(100,181,246,0.2); color: #64b5f6; }
         .urgency-urgent { background: rgba(255,107,107,0.2); color: #ff6b6b; }
-        
         .case-details { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
         .detail-row { display: flex; flex-direction: column; }
         .detail-label { font-size: 11px; color: #999; margin-bottom: 6px; }
         .detail-value { font-size: 13px; }
-        
         .case-actions { margin-top: 16px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; gap: 10px; }
         .btn-edit { padding: 10px 14px; font-size: 12px; border-radius: 8px; cursor: pointer; flex: 1; font-weight: 600; border: none; font-family: inherit; background: rgba(255,255,255,0.1); color: #fff; }
-        
         .edit-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.9); z-index: 2000; padding: 80px 20px 20px; overflow-y: auto; }
         .edit-overlay.active { display: flex; align-items: center; justify-content: center; }
-        
         .edit-panel { background: linear-gradient(135deg, #1a1a1a 0%, #111 100%); border: 1px solid rgba(255,255,255,0.2); border-radius: 20px; padding: 32px; max-width: 500px; width: 100%; }
         .edit-panel h2 { font-size: 24px; margin-bottom: 24px; }
-        
         .edit-field { margin-bottom: 20px; }
         .edit-field label { display: block; font-size: 12px; color: #999; margin-bottom: 8px; }
         .edit-field input, .edit-field select { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 12px 14px; color: #fff; font-family: inherit; font-size: 14px; }
-        
         .edit-actions { display: flex; gap: 12px; margin-top: 28px; }
         .btn-save, .btn-cancel { flex: 1; padding: 12px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
         .btn-save { background: #fff; color: #000; }
         .btn-cancel { background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2); }
-        
         .toast { position: fixed; bottom: 20px; right: 20px; background: rgba(0,0,0,0.9); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 14px 20px; border-radius: 10px; font-size: 13px; z-index: 3000; }
         .empty-state { text-align: center; padding: 60px 20px; color: #666; }
         @media (max-width: 768px) { h1 { font-size: 32px; } }
@@ -175,13 +161,24 @@
 
             async loadCases() {
                 try {
-                    const response = await fetch(this.APPS_SCRIPT_URL + "?action=get_cases");
-                    const data = await response.json();
-                    if (data.cases && Array.isArray(data.cases)) {
-                        this.allCases = data.cases;
-                        this.filterCases();
-                        this.updateDashboard();
-                    }
+                    const script = document.createElement('script');
+                    const callbackName = 'jsonpCallback_' + Date.now();
+                    window[callbackName] = (data) => {
+                        if (data.cases && Array.isArray(data.cases)) {
+                            this.allCases = data.cases;
+                            this.filterCases();
+                            this.updateDashboard();
+                        }
+                        delete window[callbackName];
+                        script.remove();
+                    };
+                    script.src = this.APPS_SCRIPT_URL + "?action=get_cases&callback=" + callbackName;
+                    script.onerror = () => {
+                        this.showToast('Failed to load cases. Check your Apps Script URL.');
+                        delete window[callbackName];
+                        script.remove();
+                    };
+                    document.head.appendChild(script);
                 } catch (error) {
                     this.showToast('Error: ' + error.message);
                 }
@@ -237,7 +234,7 @@
                 document.getElementById('editOverlay').classList.add('active');
             },
 
-            async saveEdit() {
+            saveEdit() {
                 if (!this.editingCase) return;
                 const updates = {
                     'Email': document.getElementById('editEmail').value,
@@ -246,19 +243,22 @@
                     'Urgency': document.getElementById('editUrgency').value,
                     'Docs Received': document.getElementById('editDocs').value
                 };
-                try {
-                    const response = await fetch(this.APPS_SCRIPT_URL, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        mode: 'no-cors',
-                        body: JSON.stringify({ action: 'update_case', caseId: this.editingCase['Case ID'], updates: updates })
-                    });
-                    this.showToast('✓ Case updated successfully');
-                    this.cancelEdit();
-                    await this.loadCases();
-                } catch (error) {
-                    this.showToast('Error: ' + error.message);
-                }
+                const payload = { action: 'update_case', caseId: this.editingCase['Case ID'], updates: updates };
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = this.APPS_SCRIPT_URL;
+                form.style.display = 'none';
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'data';
+                input.value = JSON.stringify(payload);
+                form.appendChild(input);
+                document.body.appendChild(form);
+                form.submit();
+                document.body.removeChild(form);
+                this.showToast('✓ Case updated successfully');
+                this.cancelEdit();
+                setTimeout(() => this.loadCases(), 1000);
             },
 
             cancelEdit() {
