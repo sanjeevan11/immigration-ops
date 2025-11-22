@@ -787,10 +787,55 @@
             .filter-input, .filter-select { width: 100%; min-width: auto; }
             .modal-content { padding: 20px 16px; }
             .edit-panel { padding: 24px; }
-            .nav-tabs { display: none; }
+            
+            /* Mobile navigation - show tabs vertically */
+            header {
+                flex-direction: column;
+                height: auto;
+                padding: 12px 16px;
+                gap: 12px;
+            }
+            
+            .nav-tabs {
+                display: flex;
+                width: 100%;
+                gap: 8px;
+            }
+            
+            .nav-tab {
+                flex: 1;
+                padding: 10px 12px;
+                font-size: 13px;
+                text-align: center;
+            }
+            
+            .logo {
+                font-size: 16px;
+                width: 100%;
+                text-align: center;
+            }
+            
+            body {
+                padding-top: 100px;
+            }
+            
+            .btn-secondary {
+                width: 100%;
+                padding: 10px;
+            }
             
             .btn-edit:active, .btn-view-more:active, .case-card:active {
                 opacity: 0.9;
+            }
+            
+            .call-window {
+                width: 95%;
+                padding: 20px;
+                max-height: 90vh;
+            }
+            
+            .demo-container {
+                padding: 16px;
             }
         }
     </style>
